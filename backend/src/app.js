@@ -277,7 +277,8 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../../frontend/dist')));
 
   // Toute requête non-API renvoie vers index.html du frontend (pour le routing client-side)
-  app.get('*', (req, res) => {
+  // Express 5.x: use regex instead of '*'
+  app.get(/^(?!\/api).*/, (req, res) => {
     res.sendFile(path.join(__dirname, '../../frontend/dist', 'index.html'));
   });
 }
