@@ -30,7 +30,7 @@ services:
     name: nexaci-frontend
     runtime: node
     buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && npx serve -s dist -l 10000
+    startCommand: cd frontend && npm run serve
     envVars:
       - key: VITE_API_URL
         value: https://nexaci-backend.onrender.com

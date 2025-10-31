@@ -55,19 +55,23 @@ connectDB();
 app.use(helmet());
 // --- CONFIGURATION CORS MISE À JOUR ---
 // Autoriser les requêtes depuis localhost:5173 (dev Vite) et d'autres IPs/réseaux locaux
+const allowedOrigins = [
+  'http://localhost:5173', // Vite dev server par défaut
+  'http://127.0.0.1:5173',  // Alternative pour localhost
+  // Production frontend sur Render
+  'https://nexaci-frontend.onrender.com',
+  // Ajoute ici l'IP de ton ordinateur si tu veux tester depuis un autre appareil
+  // Par exemple, si ton IP locale est 192.168.1.15, ajoute:
+  // 'http://192.168.1.15:5173',
+  // Ou utilise une expression régulière pour autoriser tout appareil sur le réseau local
+  /^http:\/\/192\.168\.(\d+)\.(\d+):5173$/, // Exemple pour 192.168.x.x
+  /^http:\/\/10\.(\d+)\.(\d+)\.(\d+):5173$/, // Exemple pour 10.x.x.x
+  /^http:\/\/172\.(1[6-9]|2[0-9]|3[0-1])\.(\d+)\.(\d+):5173$/, // Exemple pour 172.16.x.x - 172.31.x.x
+  // N'oublie pas d'ajouter l'IP spécifique de ton autre ordinateur si nécessaire
+];
+
 const corsOptions = {
-  origin: [
-    'http://localhost:5173', // Vite dev server par défaut
-    'http://127.0.0.1:5173',  // Alternative pour localhost
-    // Ajoute ici l'IP de ton ordinateur si tu veux tester depuis un autre appareil
-    // Par exemple, si ton IP locale est 192.168.1.15, ajoute:
-    // 'http://192.168.1.15:5173',
-    // Ou utilise une expression régulière pour autoriser tout appareil sur le réseau local
-    /^http:\/\/192\.168\.(\d+)\.(\d+):5173$/, // Exemple pour 192.168.x.x
-    /^http:\/\/10\.(\d+)\.(\d+)\.(\d+):5173$/, // Exemple pour 10.x.x.x
-    /^http:\/\/172\.(1[6-9]|2[0-9]|3[0-1])\.(\d+)\.(\d+):5173$/, // Exemple pour 172.16.x.x - 172.31.x.x
-    // N'oublie pas d'ajouter l'IP spécifique de ton autre ordinateur si nécessaire
-  ],
+  origin: allowedOrigins,
   credentials: true, // Si tu envoies des cookies ou des headers d'authentification (JWT)
   optionsSuccessStatus: 200 // Certains anciens navigateurs (IE11, divers SmartTVs) bloquent sur 204
 };
