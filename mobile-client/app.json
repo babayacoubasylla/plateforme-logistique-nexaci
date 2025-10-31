@@ -29,7 +29,7 @@
       }
     },
     "extra": {
-      "API_URL": "http://172.20.10.2:5000",
+      "API_URL": "https://nexaci-backend.onrender.com",
       "eas": {
         "projectId": "34d24a06-a6e2-426f-85d7-6502c0cf758e"
       }
