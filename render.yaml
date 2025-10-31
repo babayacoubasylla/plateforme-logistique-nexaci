@@ -23,7 +23,7 @@ services:
         value: 30d
       - key: WHATSAPP_ENABLED
         value: false
-    healthCheckPath: /health
+    healthCheckPath: /api/health
 
   # Frontend Web
   - type: web
