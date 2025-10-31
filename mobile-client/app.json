@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "NexaCI Client",
+    "slug": "nexaci-client",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/nexaci-logo.png.png",
+    "splash": {
+      "image": "./assets/images/nexaci-logo.png.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#10b981"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/34d24a06-a6e2-426f-85d7-6502c0cf758e"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nexaci.client"
+    },
+    "android": {
+      "package": "com.nexaci.client",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/nexaci-logo.png.png",
+        "backgroundColor": "#10b981"
+      }
+    },
+    "extra": {
+      "API_URL": "http://172.20.10.2:5000",
+      "eas": {
+        "projectId": "34d24a06-a6e2-426f-85d7-6502c0cf758e"
+      }
+    },
+    "owner": "babayacoubasylla",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
+  }
+}

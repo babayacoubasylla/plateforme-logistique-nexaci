@@ -1,0 +1,49 @@
+{
+  "name": "plateforme-logistique-backend",
+  "version": "1.0.0",
+  "description": "Backend pour la plateforme logistique et mandats administratifs",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "db:seed": "node scripts/seed-data.js",
+    "db:reset": "node scripts/seed-data.js"
+  },
+  "keywords": [
+    "logistique",
+    "mandat",
+    "administration",
+    "cote-divoire"
+  ],
+  "author": "Votre Equipe",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.1",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2",
+    "node-cache": "^5.1.2",
+    "nodemailer": "^7.0.9",
+    "nodemon": "^3.1.10",
+    "pdfkit": "^0.17.2",
+    "validator": "^13.15.15",
+    "winston": "^3.18.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "jest": "^30.2.0",
+    "supertest": "^7.1.4",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}

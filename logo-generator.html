@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Générateur Logo NexaCI</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+        canvas { border: 2px solid #ddd; margin: 10px 0; display: block; }
+        button { background: #10b981; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; margin: 5px; }
+        button:hover { background: #059669; }
+        .info { background: #e0f2fe; padding: 15px; border-radius: 6px; margin: 15px 0; }
+        h2 { color: #1e293b; }
+        .download-section { margin: 20px 0; padding: 20px; background: #f8fafc; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Générateur d'icônes NexaCI</h1>
+        <div class="info">
+            <strong>Instructions :</strong> Cliquez sur les boutons pour générer et télécharger les 3 icônes nécessaires pour vos applications mobiles.
+        </div>
+
+        <div class="download-section">
+            <h2>1. Icon.png (1024x1024)</h2>
+            <canvas id="iconCanvas" width="1024" height="1024"></canvas>
+            <button onclick="generateIcon()">Générer Icon</button>
+            <button onclick="downloadCanvas('iconCanvas', 'icon.png')">📥 Télécharger icon.png</button>
+        </div>
+
+        <div class="download-section">
+            <h2>2. Adaptive Icon (1024x1024)</h2>
+            <canvas id="adaptiveCanvas" width="1024" height="1024"></canvas>
+            <button onclick="generateAdaptive()">Générer Adaptive Icon</button>
+            <button onclick="downloadCanvas('adaptiveCanvas', 'adaptive-icon.png')">📥 Télécharger adaptive-icon.png</button>
+        </div>
+
+        <div class="download-section">
+            <h2>3. Splash Screen (1242x2436)</h2>
+            <canvas id="splashCanvas" width="621" height="1218" style="width: 310.5px; height: 609px;"></canvas>
+            <p><em>Affiché en taille réduite (50%)</em></p>
+            <button onclick="generateSplash('#10b981')">Générer Splash Client (Vert)</button>
+            <button onclick="generateSplash('#1976d2')">Générer Splash Livreur (Bleu)</button>
+            <button onclick="downloadCanvas('splashCanvas', 'splash.png')">📥 Télécharger splash.png</button>
+        </div>
+    </div>
+
+    <script>
+        function generateIcon() {
+            const canvas = document.getElementById('iconCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Background vert émeraude
+            ctx.fillStyle = '#10b981';
+            ctx.fillRect(0, 0, 1024, 1024);
+            
+            // Forme de document (comme dans votre logo)
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.roundRect(256, 200, 512, 624, 40);
+            ctx.fill();
+            
+            // Lignes du document
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 20;
+            ctx.beginPath();
+            ctx.moveTo(340, 350);
+            ctx.lineTo(550, 350);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(340, 450);
+            ctx.lineTo(684, 450);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(340, 550);
+            ctx.lineTo(684, 550);
+            ctx.stroke();
+            
+            // Icône moto simplifiée
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.arc(450, 680, 60, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(620, 680, 60, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Texte NC
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 180px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('NC', 512, 512);
+        }
+
+        function generateAdaptive() {
+            const canvas = document.getElementById('adaptiveCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Fond transparent
+            ctx.clearRect(0, 0, 1024, 1024);
+            
+            // Zone sûre (cercle 768px de diamètre au centre)
+            const centerX = 512;
+            const centerY = 512;
+            const safeRadius = 384;
+            
+            // Background dans la zone sûre
+            ctx.fillStyle = '#10b981';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, safeRadius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Document blanc
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.roundRect(330, 290, 384, 444, 30);
+            ctx.fill();
+            
+            // Lignes
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 15;
+            ctx.beginPath();
+            ctx.moveTo(380, 400);
+            ctx.lineTo(550, 400);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(380, 480);
+            ctx.lineTo(664, 480);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(380, 560);
+            ctx.lineTo(664, 560);
+            ctx.stroke();
+            
+            // Moto
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.arc(450, 650, 45, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(590, 650, 45, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function generateSplash(bgColor) {
+            const canvas = document.getElementById('splashCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, 1242, 2436);
+            
+            // Logo simplifié au centre
+            const centerX = 621;
+            const centerY = 1000;
+            
+            // Document blanc
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.roundRect(centerX - 150, centerY - 150, 300, 300, 20);
+            ctx.fill();
+            
+            // Lignes
+            ctx.strokeStyle = bgColor;
+            ctx.lineWidth = 12;
+            ctx.beginPath();
+            ctx.moveTo(centerX - 100, centerY - 80);
+            ctx.lineTo(centerX + 20, centerY - 80);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(centerX - 100, centerY - 20);
+            ctx.lineTo(centerX + 100, centerY - 20);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(centerX - 100, centerY + 40);
+            ctx.lineTo(centerX + 100, centerY + 40);
+            ctx.stroke();
+            
+            // Moto
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.arc(centerX - 40, centerY + 100, 25, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(centerX + 40, centerY + 100, 25, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Texte NexaCI
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 120px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('NexaCI', centerX, centerY + 220);
+            
+            ctx.font = '40px Arial';
+            ctx.fillText('Livraison & Démarches,', centerX, centerY + 290);
+            ctx.fillText('partout en Côte d\'Ivoire', centerX, centerY + 340);
+        }
+
+        function downloadCanvas(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Support pour roundRect si non disponible
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius) {
+                this.moveTo(x + radius, y);
+                this.lineTo(x + width - radius, y);
+                this.quadraticCurveTo(x + width, y, x + width, y + radius);
+                this.lineTo(x + width, y + height - radius);
+                this.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                this.lineTo(x + radius, y + height);
+                this.quadraticCurveTo(x, y + height, x, y + height - radius);
+                this.lineTo(x, y + radius);
+                this.quadraticCurveTo(x, y, x + radius, y);
+                this.closePath();
+            };
+        }
+
+        // Générer automatiquement au chargement
+        window.onload = function() {
+            generateIcon();
+            generateAdaptive();
+            generateSplash('#10b981');
+        };
+    </script>
+</body>
+</html>

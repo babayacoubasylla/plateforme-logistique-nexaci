@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "NexaCI Livreur",
+    "slug": "nexaci-livreur",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/nexaci-logo.png.png",
+    "splash": {
+      "image": "./assets/images/nexaci-logo.png.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1976d2"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/7b778603-554b-4d69-b9e5-9a225a28304e"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nexaci.livreur"
+    },
+    "android": {
+      "package": "com.nexaci.livreur",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/nexaci-logo.png.png",
+        "backgroundColor": "#1976d2"
+      },
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
+    },
+    "extra": {
+      "API_URL": "http://172.20.10.2:5000",
+      "eas": {
+        "projectId": "7b778603-554b-4d69-b9e5-9a225a28304e"
+      }
+    },
+    "owner": "babayacoubasylla",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
+  }
+}

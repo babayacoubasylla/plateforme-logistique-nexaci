@@ -1,0 +1,112 @@
+/* src/components/Dashboard/GerantDashboard.css */
+
+.gerant-dashboard {
+  padding: 20px;
+  background-color: #f5f7fa; /* Fond léger */
+  min-height: 100vh; /* Occupe toute la hauteur de la vue */
+}
+
+.dashboard-header {
+  margin-bottom: 30px;
+  text-align: center;
+  background-color: #ffffff; /* Fond blanc pour le header */
+  padding: 20px;
+  border-radius: 8px; /* Coins arrondis */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Ombre subtile */
+}
+
+.dashboard-header h1 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 2em;
+}
+
+.dashboard-header p {
+  margin: 0;
+  color: #666;
+  font-size: 1.1em;
+}
+
+/* Sections principales */
+.dashboard-stats,
+.dashboard-summary,
+.dashboard-activity,
+.dashboard-actions {
+  margin-bottom: 30px;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-stats h2,
+.dashboard-summary h2,
+.dashboard-activity h2,
+.dashboard-actions h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #444;
+  font-size: 1.5em;
+}
+
+/* Grille des statistiques */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Colonnes responsives */
+  gap: 20px; /* Espacement entre les cartes */
+}
+
+/* Grille du résumé */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Colonnes plus larges */
+  gap: 20px;
+}
+
+.summary-item {
+  background-color: #f0f4f8; /* Fond légèrement différent pour les items */
+  padding: 15px;
+  border-radius: 6px;
+}
+
+.summary-item h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.summary-item p {
+  margin: 5px 0;
+  color: #777;
+}
+
+
+/* Styles pour les messages de chargement/erreur */
+.dashboard-loading,
+.dashboard-error,
+.dashboard-no-data {
+  text-align: center;
+  padding: 50px 20px;
+  font-size: 1.2em;
+  color: #555;
+}
+
+.dashboard-error {
+  color: #d32f2f; /* Rouge pour les erreurs */
+}
+
+/* Media Queries pour le responsive (optionnel) */
+@media (max-width: 768px) {
+  .gerant-dashboard {
+    padding: 10px;
+  }
+
+  .stats-grid,
+  .summary-grid {
+    grid-template-columns: 1fr; /* Une colonne sur mobile */
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.5em;
+  }
+}

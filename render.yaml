@@ -1,0 +1,36 @@
+version: "1"
+services:
+  # Backend API
+  - type: web
+    name: nexaci-backend
+    runtime: node
+    buildCommand: cd backend && npm install --production
+    startCommand: cd backend && node src/app.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 30d
+      - key: WHATSAPP_ENABLED
+        value: false
+    healthCheckPath: /health
+
+  # Frontend Web
+  - type: web
+    name: nexaci-frontend
+    runtime: node
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npx serve -s dist -l 10000
+    envVars:
+      - key: VITE_API_URL
+        value: https://nexaci-backend.onrender.com
