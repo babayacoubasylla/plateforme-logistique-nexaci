@@ -40,5 +40,7 @@ export default defineConfig({
     port: 10000,
     host: '0.0.0.0',
     strictPort: true,
+    // Autoriser l'accès depuis le domaine Render en mode preview
+    allowedHosts: ['nexaci-frontend.onrender.com'],
   },
 });
