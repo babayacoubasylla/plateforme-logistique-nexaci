@@ -118,6 +118,12 @@
       update();
     }
 
+    // Préremplir avec les derniers builds Android (APK installables via page Expo)
+    try {
+      document.getElementById('apkClient').value = 'https://expo.dev/accounts/babayacoubasylla/projects/nexaci-client/builds/9b7b0403-6adb-4e5f-9926-886e2fa2e71c';
+      document.getElementById('apkLivreur').value = 'https://expo.dev/accounts/babayacoubasylla/projects/nexaci-livreur/builds/d9fb4a64-216e-4294-aa89-c78873c6277c';
+    } catch {}
+
     bind('apkClient', 'apkClientLink', 'qr_apk_client');
     bind('apkLivreur', 'apkLivreurLink', 'qr_apk_livreur');
     bind('iosClient', 'iosClientLink', 'qr_ios_client');
