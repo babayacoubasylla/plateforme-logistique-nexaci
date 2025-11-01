@@ -72,7 +72,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log("📡 [AuthContext] Appel de authService.login..."); // <-- LOG ICI
   const response = await authService.login(credentials);
   console.log("✅ [AuthContext] Réponse authService.login reçue:", response); // <-- LOG ICI
-  const { token, user } = response.data.data; // <-- token & user sont dans data
+  const { token, user } = response.data; // l'API de service renvoie déjà { status, message, data }
       console.log("💾 [AuthContext] Stockage du token et mise à jour de l'utilisateur..."); // <-- LOG ICI
       localStorage.setItem('token', token); // Stocker le token
       setUser(user); // Mettre à jour l'état utilisateur
@@ -101,7 +101,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log("📡 [AuthContext] Appel de authService.register..."); // <-- LOG ICI
   const response = await authService.register(userData);
   console.log("✅ [AuthContext] Réponse authService.register reçue:", response); // <-- LOG ICI
-  const { token, user } = response.data.data; // <-- token & user sont dans data
+  const { token, user } = response.data; // idem: le service normalise la réponse
       console.log("💾 [AuthContext] Stockage du token et mise à jour de l'utilisateur (inscription)..."); // <-- LOG ICI
       localStorage.setItem('token', token); // Connecter automatiquement après l'inscription
       setUser(user);
