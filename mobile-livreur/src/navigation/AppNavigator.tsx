@@ -71,7 +71,24 @@ export default function AppNavigator() {
     <NavigationContainer theme={navTheme}>
       <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShadowVisible: false }}>
         <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Connexion Livreur' }} />
-        <Stack.Screen name="MainTabs" component={MainTopTabs} options={{ headerShown: false }} />
+        <Stack.Screen 
+          name="MainTabs" 
+          component={MainTopTabs}
+          options={({ navigation }) => ({
+            title: 'NexaCI Livreur',
+            headerShown: true,
+            headerStyle: { backgroundColor: '#1976d2' },
+            headerTintColor: '#fff',
+            headerTitleStyle: { fontWeight: '700' },
+            headerRight: () => (
+              <Text 
+                onPress={() => navigation.navigate('AssignedColis')}
+                style={{ color: '#fff', fontWeight: '600' }}
+                accessibilityLabel="Voir mes livraisons"
+              >Mes livraisons</Text>
+            ),
+          })}
+        />
         {/* Détails */}
         <Stack.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Tournée' }} />
         <Stack.Screen name="AssignedColis" component={AssignedColisScreen} options={{ title: 'Mes Livraisons' }} />

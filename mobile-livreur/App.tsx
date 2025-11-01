@@ -8,7 +8,7 @@ export default function App() {
   try {
     return (
       <>
-        <StatusBar style="auto" />
+  <StatusBar style="light" backgroundColor="#1976d2" />
         <AppNavigator />
         <Toast />
       </>

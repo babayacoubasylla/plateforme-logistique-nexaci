@@ -123,7 +123,24 @@ export default function AppNavigator() {
       <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShadowVisible: false }}>
         <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Connexion' }} />
         <Stack.Screen name="Register" getComponent={() => require('@/screens/RegisterScreen').default} options={{ title: 'Créer un compte' }} />
-        <Stack.Screen name="MainTabs" component={MainTopTabs} options={{ headerShown: false }} />
+        <Stack.Screen 
+          name="MainTabs" 
+          component={MainTopTabs} 
+          options={({ navigation }) => ({ 
+            title: 'NexaCI',
+            headerShown: true,
+            headerStyle: { backgroundColor: '#1976d2' },
+            headerTintColor: '#fff',
+            headerTitleStyle: { fontWeight: '700' },
+            headerRight: () => (
+              <Text 
+                onPress={() => navigation.navigate('NewShipment')} 
+                style={{ color: '#fff', fontWeight: '600' }}
+                accessibilityLabel="Créer un colis"
+              >+ Nouveau</Text>
+            ),
+          })}
+        />
         {/* écrans secondaires accessibles via boutons */}
         <Stack.Screen name="MyShipments" component={MyShipmentsScreen} options={{ title: 'Mes Colis' }} />
         <Stack.Screen name="NewShipment" component={NewShipmentScreen} options={{ title: 'Nouveau Colis' }} />
