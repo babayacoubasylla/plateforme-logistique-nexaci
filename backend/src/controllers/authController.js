@@ -1,16 +1,26 @@
 const { User } = require('../models');
 const { generateToken, generateRefreshToken } = require('../utils/jwt');
+const { normalizeCI, variants } = require('../utils/phone');
 
 // Inscription d'un nouvel utilisateur
 exports.register = async (req, res) => {
   try {
-    const { nom, prenom, email, telephone, password, role } = req.body;
+  let { nom, prenom, email, telephone, password, role } = req.body;
 
-    console.log('Registration attempt for:', email);
+  // Normaliser email/telephone
+  email = typeof email === 'string' ? email.trim().toLowerCase() : email;
+  telephone = typeof telephone === 'string' ? normalizeCI(telephone) : telephone;
+
+  console.log('Registration attempt for:', email || telephone);
 
     // Vérifier si l'utilisateur existe déjà
+    // Rechercher existant par email exact ou par variantes de téléphone
+    const telVariants = telephone ? variants(telephone) : [];
     const existingUser = await User.findOne({
-      $or: [{ email }, { telephone }]
+      $or: [
+        ...(email ? [{ email }] : []),
+        ...(telVariants.length ? [{ telephone: { $in: telVariants } }] : []),
+      ]
     });
 
     if (existingUser) {
@@ -25,7 +35,7 @@ exports.register = async (req, res) => {
       nom,
       prenom,
       email,
-      telephone,
+      telephone, // déjà normalisé en +225XXXXXXXXXX
       password,
       role: role || 'client',
     });
@@ -69,11 +79,11 @@ exports.login = async (req, res) => {
   try {
     // Accepter identifiant dans 'email' ou 'telephone'.
     // Si un numéro de téléphone est envoyé dans 'email', le basculer automatiquement vers 'telephone' (compat mobile v2)
-    let { email, telephone, password } = req.body;
+  let { email, telephone, password } = req.body;
 
     // Normalisation basique
-    email = typeof email === 'string' ? email.trim() : email;
-    telephone = typeof telephone === 'string' ? telephone.trim() : telephone;
+  email = typeof email === 'string' ? email.trim().toLowerCase() : email;
+  telephone = typeof telephone === 'string' ? telephone.trim() : telephone;
 
     // Heuristique: si "email" ne contient pas '@' ou ressemble à un numéro, on considère que c'est un téléphone
     const looksLikePhone = (v) => typeof v === 'string' && (/^\+?\d[\d\s-]{6,}$/.test(v) || !v.includes('@'));
@@ -94,9 +104,15 @@ exports.login = async (req, res) => {
     }
 
     // Trouver l'utilisateur et inclure le password
-    const user = await User.findOne({
-      $or: [{ email }, { telephone }]
-    }).select('+password');
+    // Construire une recherche robuste par variantes
+    const telVars = telephone ? variants(telephone) : [];
+    const query = {
+      $or: [
+        ...(email ? [{ email }] : []),
+        ...(telVars.length ? [{ telephone: { $in: telVars } }] : []),
+      ]
+    };
+    const user = await User.findOne(query).select('+password');
 
     console.log('🔍 User found:', user ? 'YES' : 'NO');
     
