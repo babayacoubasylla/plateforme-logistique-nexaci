@@ -4,27 +4,35 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
 interface LoginProps {
   onSwitchToRegister: () => void;
-  // Correction de la signature pour correspondre à App.tsx
-  onLogin: (credentials: { email: string; password: string }) => Promise<void>;
+  // Permettre email OU téléphone, App.tsx relaie vers useAuth.login
+  onLogin: (credentials: { email?: string; telephone?: string; password: string }) => Promise<void>;
 }
 
 export default function Login({ onSwitchToRegister, onLogin }: LoginProps) {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState(''); // email ou téléphone
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    console.log("[Login] handleSubmit: Formulaire soumis avec:", { email, password }); // <-- LOG ICI
+    setError(null);
+    console.log("[Login] handleSubmit: Formulaire soumis avec:", { identifier, password });
     try {
-      // Appeler la fonction onLogin passée en prop avec les identifiants
-      await onLogin({ email, password });
-      console.log("[Login] handleSubmit: Appel onLogin terminé (succès ou erreur gérée)"); // <-- LOG ICI
+      // Détecter si l'identifiant est un email ou un téléphone
+      const isLikelyEmail = /@/.test(identifier) || /[a-zA-Z]/.test(identifier);
+
+      const creds = isLikelyEmail
+        ? { email: identifier.trim(), password }
+        : { telephone: identifier.trim(), password };
+
+      await onLogin(creds);
+      console.log("[Login] handleSubmit: Appel onLogin terminé (succès ou erreur gérée)");
     } catch (error) {
-      console.error("[Login] handleSubmit: Erreur non gérée dans onLogin:", error); // <-- LOG ICI
-      // L'erreur est normalement gérée dans App.tsx, mais on logge au cas où
+      console.error("[Login] handleSubmit: Erreur non gérée dans onLogin:", error);
+      setError("Impossible de se connecter. Veuillez réessayer.");
     } finally {
       setLoading(false);
     }
@@ -46,21 +54,22 @@ export default function Login({ onSwitchToRegister, onLogin }: LoginProps) {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Adresse email
+              <label htmlFor="identifier" className="block text-sm font-medium text-gray-700 mb-2">
+                Email ou téléphone
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Mail className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="identifier"
+                  type="text"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   required
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-                  placeholder="exemple@email.com"
+                  placeholder="exemple@email.com ou +2250700000001"
+                  autoComplete="username"
                 />
               </div>
             </div>
@@ -95,6 +104,10 @@ export default function Login({ onSwitchToRegister, onLogin }: LoginProps) {
                 </button>
               </div>
             </div>
+
+            {error && (
+              <div className="text-sm text-red-600 -mt-2">{error}</div>
+            )}
 
             <button
               type="submit"
