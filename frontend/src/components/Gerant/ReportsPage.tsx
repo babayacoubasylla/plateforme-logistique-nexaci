@@ -42,17 +42,34 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ onBack, agenceId }) => {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      // Remplacer par l'appel API réel quand il sera implémenté
-      const response = await apiService.getAgenceStats(agenceId, periode);
-      if (response.status === 'success') {
-        setStats(response.data);
-      } else {
-        setError('Erreur lors du chargement des statistiques');
-      }
+      // Simuler des stats pour la démo (remplacer par API réelle plus tard)
+      setTimeout(() => {
+        setStats({
+          colis: {
+            total: 45,
+            enAttente: 5,
+            enCours: 12,
+            livres: 25,
+            annules: 3
+          },
+          mandats: {
+            total: 28,
+            enAttente: 3,
+            enCours: 8,
+            termines: 15,
+            rejetes: 2
+          },
+          performance: {
+            tauxLivraison: 87.5,
+            delaiMoyenLivraison: 2.3,
+            satisfactionClient: 92
+          }
+        });
+        setLoading(false);
+      }, 500);
     } catch (err) {
       setError('Erreur lors du chargement des statistiques');
       console.error('Erreur:', err);
-    } finally {
       setLoading(false);
     }
   };
@@ -108,6 +125,8 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ onBack, agenceId }) => {
             value={periode}
             onChange={(e) => setPeriode(e.target.value)}
             className="border border-gray-300 rounded-md px-3 py-2"
+            title="Sélectionner la période"
+            aria-label="Sélectionner la période"
           >
             <option value="jour">Aujourd'hui</option>
             <option value="semaine">Cette semaine</option>

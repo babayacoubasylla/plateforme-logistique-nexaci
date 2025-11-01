@@ -53,6 +53,8 @@ export default function LoginScreen({ navigation }: Props) {
         style={styles.input}
       />
       <Button title={loading ? 'Connexion...' : 'Se connecter'} onPress={onSubmit} disabled={loading} />
+      <View style={{ height: 12 }} />
+      <Button title="Créer un compte" onPress={() => navigation.navigate('Register')} />
     </View>
   );
 }

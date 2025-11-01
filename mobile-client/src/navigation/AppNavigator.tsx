@@ -15,6 +15,7 @@ import ColisDetailScreen from '../screens/ColisDetailScreen';
 
 export type RootStackParamList = {
   Login: undefined;
+  Register: undefined;
   Dashboard: undefined;
   MyShipments: undefined;
   NewShipment: undefined;
@@ -34,6 +35,7 @@ export default function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Connexion' }} />
+        <Stack.Screen name="Register" getComponent={() => require('@/screens/RegisterScreen').default} options={{ title: 'Créer un compte' }} />
         <Stack.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Tableau de bord' }} />
         <Stack.Screen name="MyShipments" component={MyShipmentsScreen} options={{ title: 'Mes Colis' }} />
         <Stack.Screen name="NewShipment" component={NewShipmentScreen} options={{ title: 'Nouveau Colis' }} />
