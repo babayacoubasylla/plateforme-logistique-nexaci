@@ -45,9 +45,9 @@ export default function RegisterScreen({ navigation }: Props) {
       if (!token || !user) throw new Error('Réponse invalide du serveur');
 
       await AsyncStorage.setItem('token', token);
-      await AsyncStorage.setItem('user', JSON.stringify(user));
+  await AsyncStorage.setItem('user', JSON.stringify(user));
 
-      navigation.replace('Dashboard');
+  navigation.replace('MainTabs');
     } catch (e: any) {
       const msg = e?.response?.data?.message || e?.message || 'Inscription échouée';
       Alert.alert('Erreur', msg);

@@ -2,6 +2,8 @@ import * as React from 'react';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { View, Text } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import LoginScreen from '@/screens/LoginScreen';
 import DashboardScreen from '@/screens/DashboardScreen';
 import AssignedColisScreen from '@/screens/AssignedColisScreen';
@@ -35,10 +37,30 @@ function MainTopTabs() {
         tabBarScrollEnabled: true,
       }}
     >
-      <TopTabs.Screen name="Dashboard" component={DashboardScreen} options={{ tabBarLabel: 'Tournée' }} />
-      <TopTabs.Screen name="AssignedColis" component={AssignedColisScreen} options={{ tabBarLabel: 'Mes livraisons' }} />
-      <TopTabs.Screen name="History" component={HistoryScreen} options={{ tabBarLabel: 'Historique' }} />
-      <TopTabs.Screen name="Profile" component={ProfileScreen} options={{ tabBarLabel: 'Profil' }} />
+      <TopTabs.Screen name="Dashboard" component={DashboardScreen} options={{ tabBarLabel: ({ color, focused }) => (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <MaterialCommunityIcons name={focused ? 'route' : 'map-marker-path'} size={16} color={color} />
+          <Text style={{ color, fontWeight: '600' }}>Tournée</Text>
+        </View>
+      ) }} />
+      <TopTabs.Screen name="AssignedColis" component={AssignedColisScreen} options={{ tabBarLabel: ({ color, focused }) => (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <MaterialCommunityIcons name={focused ? 'truck-delivery' : 'truck-delivery-outline'} size={16} color={color} />
+          <Text style={{ color, fontWeight: '600' }}>Mes livraisons</Text>
+        </View>
+      ) }} />
+      <TopTabs.Screen name="History" component={HistoryScreen} options={{ tabBarLabel: ({ color, focused }) => (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <MaterialCommunityIcons name={focused ? 'history' : 'timeline-clock-outline'} size={16} color={color} />
+          <Text style={{ color, fontWeight: '600' }}>Historique</Text>
+        </View>
+      ) }} />
+      <TopTabs.Screen name="Profile" component={ProfileScreen} options={{ tabBarLabel: ({ color, focused }) => (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <MaterialCommunityIcons name={focused ? 'account' : 'account-outline'} size={16} color={color} />
+          <Text style={{ color, fontWeight: '600' }}>Profil</Text>
+        </View>
+      ) }} />
     </TopTabs.Navigator>
   );
 }

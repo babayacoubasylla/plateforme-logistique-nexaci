@@ -2,6 +2,8 @@ import React from 'react';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { View, Text } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import LoginScreen from '@/screens/LoginScreen';
 import DashboardScreen from '@/screens/DashboardScreen';
 import MyShipmentsScreen from '@/screens/MyShipmentsScreen';
@@ -51,35 +53,60 @@ function MainTopTabs() {
         name="Dashboard"
         component={DashboardScreen}
         options={{
-          tabBarLabel: 'Accueil',
+          tabBarLabel: ({ color, focused }) => (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <MaterialCommunityIcons name={focused ? 'home' : 'home-outline'} size={16} color={color} />
+              <Text style={{ color, fontWeight: '600' }}>Accueil</Text>
+            </View>
+          ),
         }}
       />
       <TopTabs.Screen
         name="MyShipments"
         component={MyShipmentsScreen}
         options={{
-          tabBarLabel: 'Colis',
+          tabBarLabel: ({ color, focused }) => (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <MaterialCommunityIcons name={focused ? 'cube' : 'cube-outline'} size={16} color={color} />
+              <Text style={{ color, fontWeight: '600' }}>Colis</Text>
+            </View>
+          ),
         }}
       />
       <TopTabs.Screen
         name="MyMandates"
         component={MyMandatesScreen}
         options={{
-          tabBarLabel: 'Mandats',
+          tabBarLabel: ({ color, focused }) => (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <MaterialCommunityIcons name={focused ? 'file-document' : 'file-document-outline'} size={16} color={color} />
+              <Text style={{ color, fontWeight: '600' }}>Mandats</Text>
+            </View>
+          ),
         }}
       />
       <TopTabs.Screen
         name="Tracking"
         component={TrackingScreen}
         options={{
-          tabBarLabel: 'Suivi',
+          tabBarLabel: ({ color, focused }) => (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <MaterialCommunityIcons name={focused ? 'magnify-scan' : 'magnify'} size={16} color={color} />
+              <Text style={{ color, fontWeight: '600' }}>Suivi</Text>
+            </View>
+          ),
         }}
       />
       <TopTabs.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
-          tabBarLabel: 'Profil',
+          tabBarLabel: ({ color, focused }) => (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <MaterialCommunityIcons name={focused ? 'account' : 'account-outline'} size={16} color={color} />
+              <Text style={{ color, fontWeight: '600' }}>Profil</Text>
+            </View>
+          ),
         }}
       />
     </TopTabs.Navigator>

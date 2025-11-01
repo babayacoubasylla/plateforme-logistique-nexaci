@@ -81,7 +81,7 @@ export default function MandateDetailScreen({ route }: Props) {
       const { default: AsyncStorage } = await import('@react-native-async-storage/async-storage');
       const token = await AsyncStorage.getItem('token');
       const url = `${API_URL}/api/mandats/${mandat._id}/receipt`;
-      const fileUri = `${FileSystem.cacheDirectory}recu-mandat-${mandat.reference}.pdf`;
+  const fileUri = `${(FileSystem as any).cacheDirectory || ''}recu-mandat-${mandat.reference}.pdf`;
       const dl = await FileSystem.downloadAsync(url, fileUri, {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined
       });
