@@ -1,5 +1,5 @@
 // src/services/api.ts
-import axios, { AxiosHeaders } from 'axios';
+import axios from 'axios';
 
 // L'URL de base du serveur backend
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -12,32 +12,45 @@ const api = axios.create({
     'Accept': 'application/json',
   },
   withCredentials: true, // Pour gérer les cookies CORS si nécessaire
-}) as typeof axios;
+});
 
 // Intercepteur pour ajouter le token JWT aux requêtes sortantes
 api.interceptors.request.use(
   (config) => {
     console.log("🔄 [API Intercepteur] Préparation de la requête pour:", config.url);
     
-    // Créer une nouvelle instance de AxiosHeaders si nécessaire
-    config.headers = config.headers || new axios.AxiosHeaders();
+    // Normaliser/assurer la présence des en-têtes
+    const headers: any = config.headers ?? {};
 
     // Ajouter le Content-Type par défaut si non défini
-    if (!config.headers['Content-Type']) {
-      config.headers.set('Content-Type', 'application/json');
+    if (typeof headers.set === 'function') {
+      // Axios v1 peut fournir AxiosHeaders avec .set()
+      if (!headers.get?.('Content-Type')) headers.set('Content-Type', 'application/json');
+    } else {
+      if (!headers['Content-Type']) headers['Content-Type'] = 'application/json';
     }
 
-    // Récupérer le token depuis le localStorage
+    // Récupérer le token depuis le localStorage et l'ajouter si présent
     const token = localStorage.getItem('token');
     if (token) {
       console.log("🔑 [API Intercepteur] Token trouvé, ajout aux headers");
-      config.headers.set('Authorization', `Bearer ${token}`);
+      if (typeof headers.set === 'function') {
+        headers.set('Authorization', `Bearer ${token}`);
+      } else {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
     } else {
       console.log("⚠️ [API Intercepteur] Pas de token trouvé pour la requête");
     }
 
-    // Log des headers finaux (pour débogage)
-    console.log("📨 [API Intercepteur] Headers de la requête:", config.headers);
+    // Réassigner les headers normalisés
+    config.headers = headers;
+
+    // Log réduit des headers (clé utiles uniquement)
+    try {
+      const authHeader = typeof headers.get === 'function' ? headers.get('Authorization') : headers['Authorization'];
+      console.log("📨 [API Intercepteur] Authorization présent:", Boolean(authHeader));
+    } catch {}
     
     return config;
   },
@@ -52,7 +65,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     console.error("🔴 [API Intercepteur] Erreur détectée:", {
-      config: error.config,
+      endpoint: error.config?.url,
+      method: error.config?.method,
       status: error.response?.status,
       data: error.response?.data
     });
