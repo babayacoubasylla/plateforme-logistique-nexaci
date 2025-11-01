@@ -50,7 +50,7 @@ import { Page } from './types'; // Assure-toi que Page inclut toutes les pages p
  * Gère l'authentification, la navigation et le rendu des différentes pages.
  */
 function App() {
-  const { user, loading, login } = useAuth(); // Récupérer l'utilisateur, l'état de chargement et la fonction login
+  const { user, loading, login, register } = useAuth(); // Récupérer l'utilisateur, l'état de chargement et les fonctions d'auth
   console.log("[App] État 'user' dans App.tsx:", user); // <-- LOG ICI
   console.log("[App] État 'loading' dans App.tsx:", loading); // <-- LOG ICI
   const [currentPage, setCurrentPage] = useState<Page>('login'); // Page actuelle
@@ -289,13 +289,34 @@ function App() {
       return (
         <Register
           onSwitchToLogin={() => setCurrentPage('login')}
-          // Assure-toi que Register gère la logique d'inscription
-          onRegister={async (userData) => {
-             console.log("Inscription demandée:", userData);
-             // Implémenter la logique d'inscription ici si nécessaire
-             // Par exemple, appeler useAuth().register
-             // Pour cet exemple, on bascule vers login après.
-             setCurrentPage('login');
+          onRegister={async (email, password, fullName, phone) => {
+            try {
+              console.log("[App] Inscription demandée:", { email, fullName, phone });
+              const parts = fullName.trim().split(/\s+/);
+              const prenom = parts[0] || '';
+              const nom = parts.slice(1).join(' ') || parts[0] || '';
+
+              // Appeler l'inscription du contexte pour créer l'utilisateur + stocker token
+              const result = await register({
+                nom,
+                prenom,
+                email,
+                telephone: phone,
+                password,
+              });
+
+              if (!result.success) {
+                console.error('[App] Erreur d\'inscription:', result.message);
+                alert(result.message || "Erreur d'inscription");
+                return;
+              }
+
+              // L'utilisateur est connecté automatiquement; l'effet useEffect redirigera
+              console.log('[App] Inscription réussie, redirection via useEffect (user)');
+            } catch (e) {
+              console.error('[App] Exception durant inscription:', e);
+              alert('Impossible de créer le compte');
+            }
           }}
         />
       );
