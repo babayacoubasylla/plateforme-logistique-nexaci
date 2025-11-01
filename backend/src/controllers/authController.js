@@ -141,9 +141,7 @@ exports.login = async (req, res) => {
     const token = generateToken({ id: user._id });
     const refreshToken = generateRefreshToken({ id: user._id });
 
-    // Mettre à jour la date de dernière connexion
-    user.date_modification = new Date();
-    await user.save();
+  // Ne pas modifier updatedAt ici pour éviter d'invalider le JWT via changedPasswordAfter
 
     // Retourner la réponse sans le mot de passe
     const userResponse = {

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NexaCI - QRCodes d'installation</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; padding: 24px; background: #0b1220; color: #e6edf3; }
+    h1, h2 { margin: 0 0 8px; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 18px; margin-top: 24px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .card { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 16px; }
+    .row { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 12px; }
+    label { font-size: 12px; color: #9ca3af; }
+    input { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #374151; background: #0b1220; color: #e6edf3; }
+    .qr { display: flex; align-items: center; justify-content: center; height: 260px; background: #0b1220; border: 1px dashed #374151; border-radius: 12px; }
+    .meta { font-size: 12px; color: #9ca3af; margin-top: 8px; word-break: break-all; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; border: 1px solid #374151; color: #9ca3af; }
+    a { color: #60a5fa; text-decoration: none; }
+    a.button { display: inline-block; margin-top: 8px; padding: 8px 10px; border: 1px solid #374151; border-radius: 8px; }
+    footer { margin-top: 28px; font-size: 12px; color: #9ca3af; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+</head>
+<body>
+  <h1>NexaCI — QRCodes d'installation</h1>
+  <p class="meta">Scannez pour installer/ouvrir les apps. Sur Android, l'installation d'un APK peut nécessiter d'autoriser les "sources inconnues".</p>
+
+  <div class="grid">
+    <div class="card">
+      <div class="row">
+        <div class="badge">Android APK — Client</div>
+        <label for="apkClient">URL APK Client</label>
+        <input id="apkClient" placeholder="Collez ici le lien APK (EAS)" />
+      </div>
+      <div class="qr" id="qr_apk_client"></div>
+      <div class="meta"><a id="apkClientLink" href="#" target="_blank" rel="noreferrer noopener">Lien APK Client</a></div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div class="badge">Android APK — Livreur</div>
+        <label for="apkLivreur">URL APK Livreur</label>
+        <input id="apkLivreur" placeholder="Collez ici le lien APK (EAS)" />
+      </div>
+      <div class="qr" id="qr_apk_livreur"></div>
+      <div class="meta"><a id="apkLivreurLink" href="#" target="_blank" rel="noreferrer noopener">Lien APK Livreur</a></div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div class="badge">iOS — TestFlight (Client)</div>
+        <label for="iosClient">URL TestFlight Client</label>
+        <input id="iosClient" placeholder="Collez ici le lien TestFlight" />
+      </div>
+      <div class="qr" id="qr_ios_client"></div>
+      <div class="meta"><a id="iosClientLink" href="#" target="_blank" rel="noreferrer noopener">Lien TestFlight Client</a></div>
+      <div class="meta">Note: l'installation sur iPhone requiert un compte Apple/inscription TestFlight. Les liens "iOS Simulator" ne s'installent pas sur iPhone.</div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div class="badge">iOS — TestFlight (Livreur)</div>
+        <label for="iosLivreur">URL TestFlight Livreur</label>
+        <input id="iosLivreur" placeholder="Collez ici le lien TestFlight" />
+      </div>
+      <div class="qr" id="qr_ios_livreur"></div>
+      <div class="meta"><a id="iosLivreurLink" href="#" target="_blank" rel="noreferrer noopener">Lien TestFlight Livreur</a></div>
+      <div class="meta">Alternative immédiate sans Apple Developer: Expo Go + QR du projet.</div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div class="badge">Web — Frontend</div>
+        <label for="webUrl">URL Frontend</label>
+        <input id="webUrl" value="https://nexaci-frontend.onrender.com" />
+      </div>
+      <div class="qr" id="qr_web"></div>
+      <div class="meta"><a id="webLink" href="https://nexaci-frontend.onrender.com" target="_blank" rel="noreferrer noopener">Ouvrir le site</a></div>
+    </div>
+  </div>
+
+  <footer>
+    Dernière mise à jour: 1 novembre 2025 — Collez vos liens (APK/TestFlight) et scannez. Si vous n'avez pas encore les APK, lancez les builds EAS Android (profil preview) pour générer les URLs.
+  </footer>
+
+  <script>
+    function renderQR(targetId, text) {
+      const el = document.getElementById(targetId);
+      el.innerHTML = '';
+      if (!text || !/^https?:\/\//i.test(text)) {
+        const p = document.createElement('div');
+        p.style.fontSize = '12px';
+        p.style.color = '#9ca3af';
+        p.textContent = 'Collez un lien valide pour générer le QR code';
+        el.appendChild(p);
+        return;
+      }
+      QRCode.toCanvas(text, { width: 240, color: { dark: '#e6edf3', light: '#0b1220' } }, function (err, canvas) {
+        if (err) {
+          el.textContent = 'Erreur QR: ' + err.message;
+        } else {
+          el.appendChild(canvas);
+        }
+      });
+    }
+
+    function bind(inputId, linkId, qrId) {
+      const input = document.getElementById(inputId);
+      const link = document.getElementById(linkId);
+      const update = () => {
+        const url = input.value.trim();
+        if (url) { link.href = url; link.textContent = url; }
+        renderQR(qrId, url);
+      };
+      input.addEventListener('input', update);
+      update();
+    }
+
+    bind('apkClient', 'apkClientLink', 'qr_apk_client');
+    bind('apkLivreur', 'apkLivreurLink', 'qr_apk_livreur');
+    bind('iosClient', 'iosClientLink', 'qr_ios_client');
+    bind('iosLivreur', 'iosLivreurLink', 'qr_ios_livreur');
+    bind('webUrl', 'webLink', 'qr_web');
+
+    // Pré-remplissage possible (ex: iOS simulator pages actuelles)
+    // document.getElementById('iosClient').value = 'https://expo.dev/accounts/babayacoubasylla/projects/nexaci-client/builds/51936837-30f6-4184-8c31-1136faf39b43';
+    // document.getElementById('iosLivreur').value = 'https://expo.dev/accounts/babayacoubasylla/projects/nexaci-livreur/builds/e0359998-ebfa-4ad6-937f-a24adc7d94d3';
+    // bind again to render with defaults if set
+  </script>
+</body>
+</html>

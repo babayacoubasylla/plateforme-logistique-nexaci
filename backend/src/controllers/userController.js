@@ -1,4 +1,5 @@
-const { User } = require('../models');
+const { User, Agence } = require('../models');
+const crypto = require('crypto');
 
 // Récupérer tous les utilisateurs (admin seulement)
 exports.getAllUsers = async (req, res) => {
@@ -17,6 +18,72 @@ exports.getAllUsers = async (req, res) => {
       status: 'error',
       message: error.message,
     });
+  }
+};
+
+// Créer un utilisateur (admin seulement)
+exports.createUser = async (req, res) => {
+  try {
+    const { nom, prenom, email, telephone, role, profile } = req.body || {};
+
+    if (!nom || !prenom || !email || !telephone) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'nom, prenom, email et telephone sont requis.'
+      });
+    }
+
+    // Vérifier doublons email/téléphone
+    const existing = await User.findOne({ $or: [{ email }, { telephone }] });
+    if (existing) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Un utilisateur avec cet email ou téléphone existe déjà.'
+      });
+    }
+
+    // Mapper agence_id -> profile.agence si fourni
+    let mappedProfile = profile || {};
+    const agenceId = profile?.agence_id || req.body.agence_id;
+    if (agenceId) {
+      const agence = await Agence.findById(agenceId);
+      if (!agence) {
+        return res.status(400).json({ status: 'error', message: 'Agence non trouvée.' });
+      }
+      mappedProfile = { ...mappedProfile, agence: agence._id };
+    }
+
+    // Générer un mot de passe temporaire si non fourni (UI admin ne demande pas le mot de passe)
+    const tempPassword = req.body.password || crypto.randomBytes(6).toString('base64url');
+
+    const newUser = await User.create({
+      nom,
+      prenom,
+      email,
+      telephone,
+      role: role || 'client',
+      password: tempPassword,
+      profile: mappedProfile
+    });
+
+    const userResponse = {
+      id: newUser._id,
+      nom: newUser.nom,
+      prenom: newUser.prenom,
+      email: newUser.email,
+      telephone: newUser.telephone,
+      role: newUser.role,
+      profile: newUser.profile,
+      date_creation: newUser.date_creation
+    };
+
+    return res.status(201).json({
+      status: 'success',
+      message: 'Utilisateur créé avec succès.',
+      data: { user: userResponse, tempPassword }
+    });
+  } catch (error) {
+    return res.status(400).json({ status: 'error', message: error.message });
   }
 };
 
@@ -63,44 +130,34 @@ exports.updateUser = async (req, res) => {
       });
     }
 
-    // Valider l'association d'agence
+    // Valider l'association d'agence (mapper agence_id -> profile.agence)
     if (req.body.profile?.agence_id) {
       // Seuls les gérants peuvent avoir une agence associée
-      if (req.body.role && req.body.role !== 'gerant') {
-        return res.status(400).json({
-          status: 'error',
-          message: 'Seuls les gérants peuvent être associés à une agence.'
-        });
-      }
-      if (!req.body.role && existingUser.role !== 'gerant') {
+      const nextRole = req.body.role || existingUser.role;
+      if (nextRole !== 'gerant') {
         return res.status(400).json({
           status: 'error',
           message: 'Seuls les gérants peuvent être associés à une agence.'
         });
       }
 
-      // Vérifier si l'agence existe
-      const { Agence } = require('../models');
       const agence = await Agence.findById(req.body.profile.agence_id);
       if (!agence) {
-        return res.status(400).json({
-          status: 'error',
-          message: 'Agence non trouvée.'
-        });
+        return res.status(400).json({ status: 'error', message: 'Agence non trouvée.' });
       }
 
-      // Vérifier si l'agence n'est pas déjà assignée à un autre gérant
       const existingGerant = await User.findOne({
         _id: { $ne: req.params.id },
         role: 'gerant',
-        'profile.agence_id': req.body.profile.agence_id
+        'profile.agence': req.body.profile.agence_id
       });
       if (existingGerant) {
-        return res.status(400).json({
-          status: 'error',
-          message: 'Cette agence est déjà assignée à un autre gérant.'
-        });
+        return res.status(400).json({ status: 'error', message: 'Cette agence est déjà assignée à un autre gérant.' });
       }
+
+      // Remplacer agence_id par la clé correcte 'agence'
+      req.body.profile.agence = req.body.profile.agence_id;
+      delete req.body.profile.agence_id;
     }
 
     const user = await User.findByIdAndUpdate(

@@ -2,6 +2,7 @@ const express = require('express');
 const {
   getAllUsers,
   getUser,
+  createUser,
   updateUser,
   deleteUser,
   updateMe,
@@ -19,10 +20,12 @@ router.patch('/update-me', updateMe);
 router.use(restrictTo('admin', 'super_admin'));
 
 router.get('/', getAllUsers);
+router.post('/', createUser);
 router
   .route('/:id')
   .get(getUser)
   .patch(updateUser)
+  .put(updateUser)
   .delete(deleteUser);
 
 module.exports = router;
