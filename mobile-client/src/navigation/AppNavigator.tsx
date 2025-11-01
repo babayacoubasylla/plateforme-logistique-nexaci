@@ -42,11 +42,24 @@ function MainTopTabs() {
       screenOptions={{
         tabBarActiveTintColor: '#fff',
         tabBarInactiveTintColor: 'rgba(255,255,255,0.7)',
-        tabBarStyle: { backgroundColor: '#1976d2' },
-        tabBarIndicatorStyle: { backgroundColor: '#fff', height: 3, borderRadius: 3 },
-        tabBarLabelStyle: { fontWeight: '600' },
+        tabBarStyle: { 
+          backgroundColor: '#1976d2',
+          elevation: 4,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 3,
+        },
+        tabBarIndicatorStyle: { 
+          backgroundColor: '#fff', 
+          height: 3, 
+          borderRadius: 3,
+        },
+        tabBarLabelStyle: { fontWeight: '600', fontSize: 13 },
         tabBarGap: 8,
         tabBarScrollEnabled: true,
+        tabBarPressColor: 'rgba(255,255,255,0.2)',
+        tabBarPressOpacity: 0.8,
       }}
     >
       <TopTabs.Screen
@@ -133,11 +146,18 @@ export default function AppNavigator() {
             headerTintColor: '#fff',
             headerTitleStyle: { fontWeight: '700' },
             headerRight: () => (
-              <Text 
-                onPress={() => navigation.navigate('NewShipment')} 
-                style={{ color: '#fff', fontWeight: '600' }}
-                accessibilityLabel="Créer un colis"
-              >+ Nouveau</Text>
+              <View style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Text 
+                  onPress={() => navigation.navigate('NewShipment')} 
+                  style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}
+                  accessibilityLabel="Créer un colis"
+                >+ Colis</Text>
+                <Text 
+                  onPress={() => navigation.navigate('NewMandate')} 
+                  style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}
+                  accessibilityLabel="Créer un mandat"
+                >+ Mandat</Text>
+              </View>
             ),
           })}
         />

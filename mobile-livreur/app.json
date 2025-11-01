@@ -48,6 +48,9 @@
     "owner": "babayacoubasylla",
     "runtimeVersion": {
       "policy": "appVersion"
-    }
+    },
+    "plugins": [
+      "expo-barcode-scanner"
+    ]
   }
 }

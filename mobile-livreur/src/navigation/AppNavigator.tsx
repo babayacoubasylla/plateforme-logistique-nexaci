@@ -10,6 +10,7 @@ import AssignedColisScreen from '@/screens/AssignedColisScreen';
 import ColisDetailScreen from '@/screens/ColisDetailScreen';
 import HistoryScreen from '../screens/HistoryScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import ScannerScreen from '../screens/ScannerScreen';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -19,6 +20,7 @@ export type RootStackParamList = {
   ColisDetail: { colisId: string };
   History: undefined;
   Profile: undefined;
+  Scanner: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -31,10 +33,23 @@ function MainTopTabs() {
       screenOptions={{
         tabBarActiveTintColor: '#fff',
         tabBarInactiveTintColor: 'rgba(255,255,255,0.7)',
-        tabBarStyle: { backgroundColor: '#1976d2' },
-        tabBarIndicatorStyle: { backgroundColor: '#fff', height: 3, borderRadius: 3 },
-        tabBarLabelStyle: { fontWeight: '600' },
+        tabBarStyle: { 
+          backgroundColor: '#1976d2',
+          elevation: 4,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 3,
+        },
+        tabBarIndicatorStyle: { 
+          backgroundColor: '#fff', 
+          height: 3, 
+          borderRadius: 3,
+        },
+        tabBarLabelStyle: { fontWeight: '600', fontSize: 13 },
         tabBarScrollEnabled: true,
+        tabBarPressColor: 'rgba(255,255,255,0.2)',
+        tabBarPressOpacity: 0.8,
       }}
     >
       <TopTabs.Screen name="Dashboard" component={DashboardScreen} options={{ tabBarLabel: ({ color, focused }) => (
@@ -81,11 +96,18 @@ export default function AppNavigator() {
             headerTintColor: '#fff',
             headerTitleStyle: { fontWeight: '700' },
             headerRight: () => (
-              <Text 
-                onPress={() => navigation.navigate('AssignedColis')}
-                style={{ color: '#fff', fontWeight: '600' }}
-                accessibilityLabel="Voir mes livraisons"
-              >Mes livraisons</Text>
+              <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Text 
+                  onPress={() => navigation.navigate('Scanner')}
+                  style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}
+                  accessibilityLabel="Scanner un code"
+                >📷 Scanner</Text>
+                <Text 
+                  onPress={() => navigation.navigate('AssignedColis')}
+                  style={{ color: '#fff', fontWeight: '600', fontSize: 14 }}
+                  accessibilityLabel="Voir mes livraisons"
+                >Livraisons</Text>
+              </View>
             ),
           })}
         />
@@ -95,6 +117,7 @@ export default function AppNavigator() {
         <Stack.Screen name="ColisDetail" component={ColisDetailScreen} options={{ title: 'Détails Colis' }} />
         <Stack.Screen name="History" component={HistoryScreen} options={{ title: 'Historique' }} />
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Mon Profil' }} />
+        <Stack.Screen name="Scanner" component={ScannerScreen} options={{ title: 'Scanner Code', headerShown: true }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
