@@ -70,9 +70,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     console.log("🔐 [AuthContext] Fonction login ENTREE avec:", credentials); // <-- LOG ICI
     try {
       console.log("📡 [AuthContext] Appel de authService.login..."); // <-- LOG ICI
-  const response = await authService.login(credentials);
-  console.log("✅ [AuthContext] Réponse authService.login reçue:", response); // <-- LOG ICI
-  const { token, user } = response.data; // l'API de service renvoie déjà { status, message, data }
+      const response = await authService.login(credentials);
+      console.log("✅ [AuthContext] Réponse authService.login reçue:", response); // <-- LOG ICI
+      // Supporter à la fois { status, message, data: { token, user } } et directement { token, user }
+      const payload: any = (response as any)?.data ?? response;
+      const token = payload?.token;
+      const user = payload?.user;
+      if (!token || !user) {
+        throw new Error('Réponse de connexion invalide');
+      }
       console.log("💾 [AuthContext] Stockage du token et mise à jour de l'utilisateur..."); // <-- LOG ICI
       localStorage.setItem('token', token); // Stocker le token
       setUser(user); // Mettre à jour l'état utilisateur
@@ -99,9 +105,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     console.log("🔐 [AuthContext] Fonction register ENTREE avec:", userData); // <-- LOG ICI
     try {
       console.log("📡 [AuthContext] Appel de authService.register..."); // <-- LOG ICI
-  const response = await authService.register(userData);
-  console.log("✅ [AuthContext] Réponse authService.register reçue:", response); // <-- LOG ICI
-  const { token, user } = response.data; // idem: le service normalise la réponse
+      const response = await authService.register(userData);
+      console.log("✅ [AuthContext] Réponse authService.register reçue:", response); // <-- LOG ICI
+      const payload: any = (response as any)?.data ?? response;
+      const token = payload?.token;
+      const user = payload?.user;
+      if (!token || !user) {
+        throw new Error("Réponse d'inscription invalide");
+      }
       console.log("💾 [AuthContext] Stockage du token et mise à jour de l'utilisateur (inscription)..."); // <-- LOG ICI
       localStorage.setItem('token', token); // Connecter automatiquement après l'inscription
       setUser(user);

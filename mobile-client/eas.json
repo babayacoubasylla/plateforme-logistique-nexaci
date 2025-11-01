@@ -13,6 +13,9 @@
       "credentialsSource": "remote",
       "android": {
         "buildType": "apk"
+      },
+      "ios": {
+        "simulator": true
       }
     },
     "production": {
