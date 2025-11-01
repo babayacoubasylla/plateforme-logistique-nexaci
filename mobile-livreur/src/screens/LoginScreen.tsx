@@ -27,9 +27,9 @@ export default function LoginScreen({ navigation }: Props) {
       }
 
       if (!token) throw new Error('Token manquant');
-      await AsyncStorage.setItem('token', token);
-      await AsyncStorage.setItem('user', JSON.stringify(user || {}));
-      navigation.replace('Dashboard');
+  await AsyncStorage.setItem('token', token);
+  await AsyncStorage.setItem('user', JSON.stringify(user || {}));
+  navigation.replace('MainTabs');
     } catch (e: any) {
       const msg = e?.response?.data?.message || e?.message || 'Connexion échouée';
       Alert.alert('Erreur', msg);

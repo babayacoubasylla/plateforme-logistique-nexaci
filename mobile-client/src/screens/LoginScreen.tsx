@@ -23,8 +23,8 @@ export default function LoginScreen({ navigation }: Props) {
         throw new Error('Réponse invalide du serveur');
       }
       await AsyncStorage.setItem('token', token);
-      await AsyncStorage.setItem('user', JSON.stringify(user));
-      navigation.replace('Dashboard');
+  await AsyncStorage.setItem('user', JSON.stringify(user));
+  navigation.replace('MainTabs');
     } catch (e: any) {
       const msg = e?.response?.data?.message || e?.message || 'Connexion échouée';
       Alert.alert('Erreur', msg);
