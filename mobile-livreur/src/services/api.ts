@@ -53,9 +53,15 @@ api.interceptors.response.use(
 );
 
 // Auth
-export const login = (email: string, password: string) => {
-  console.log('[mobile-livreur] 🔐 Tentative de login pour:', email);
-  return api.post('/api/auth/login', { email, password });
+export const login = (identifier: string, password: string) => {
+  console.log('[mobile-livreur] 🔐 Tentative de login pour:', identifier);
+  // Détecter si c'est un email ou un téléphone
+  const isEmail = /@/.test(identifier) || /[a-zA-Z]/.test(identifier);
+  const payload = isEmail 
+    ? { email: identifier.trim(), password }
+    : { telephone: identifier.trim(), password };
+  console.log('[mobile-livreur] 📤 Payload:', payload);
+  return api.post('/api/auth/login', payload);
 };
 
 // Colis assignés au livreur

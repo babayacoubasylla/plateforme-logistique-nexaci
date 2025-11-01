@@ -38,9 +38,9 @@ export default function LoginScreen({ navigation }: Props) {
       <Logo size="large" showText={true} />
       <Text style={styles.title}>Connexion</Text>
       <TextInput
-        placeholder="Email"
+        placeholder="Email ou téléphone"
         autoCapitalize="none"
-        keyboardType="email-address"
+        keyboardType="default"
         value={email}
         onChangeText={setEmail}
         style={styles.input}

@@ -52,9 +52,15 @@ api.interceptors.response.use(
   }
 );
 
-export const login = (email: string, password: string) => {
-  console.log('[mobile-client] 🔐 Tentative de login pour:', email);
-  return api.post('/api/auth/login', { email, password });
+export const login = (identifier: string, password: string) => {
+  console.log('[mobile-client] 🔐 Tentative de login pour:', identifier);
+  // Détecter si c'est un email ou un téléphone
+  const isEmail = /@/.test(identifier) || /[a-zA-Z]/.test(identifier);
+  const payload = isEmail 
+    ? { email: identifier.trim(), password }
+    : { telephone: identifier.trim(), password };
+  console.log('[mobile-client] 📤 Payload:', payload);
+  return api.post('/api/auth/login', payload);
 };
 
 export const getMyColis = () => api.get('/api/colis/my-colis');

@@ -44,9 +44,9 @@ export default function LoginScreen({ navigation }: Props) {
       <Text style={styles.title}>Connexion Livreur</Text>
       <Text style={styles.subtitle}>Accédez à votre tournée de livraison</Text>
       <TextInput
-        placeholder="Email"
+        placeholder="Email ou téléphone"
         autoCapitalize="none"
-        keyboardType="email-address"
+        keyboardType="default"
         value={email}
         onChangeText={setEmail}
         style={styles.input}
