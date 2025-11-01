@@ -67,10 +67,23 @@ exports.register = async (req, res) => {
 // Connexion utilisateur
 exports.login = async (req, res) => {
   try {
-    const { email, telephone, password } = req.body;
+    // Accepter identifiant dans 'email' ou 'telephone'.
+    // Si un numéro de téléphone est envoyé dans 'email', le basculer automatiquement vers 'telephone' (compat mobile v2)
+    let { email, telephone, password } = req.body;
 
-    console.log('🔍 Login attempt for:', email || telephone);
-    console.log('🔍 Password provided:', password);
+    // Normalisation basique
+    email = typeof email === 'string' ? email.trim() : email;
+    telephone = typeof telephone === 'string' ? telephone.trim() : telephone;
+
+    // Heuristique: si "email" ne contient pas '@' ou ressemble à un numéro, on considère que c'est un téléphone
+    const looksLikePhone = (v) => typeof v === 'string' && (/^\+?\d[\d\s-]{6,}$/.test(v) || !v.includes('@'));
+    if (!telephone && looksLikePhone(email)) {
+      telephone = email;
+      email = undefined;
+    }
+
+  console.log('🔍 Login attempt for:', email || telephone);
+  console.log('🔍 Password provided length:', typeof password === 'string' ? password.length : 0);
 
     // Vérifier que email ou telephone est fourni
     if (!email && !telephone) {
