@@ -17,20 +17,43 @@ const agenceRoutes = require('./routes/agenceRoutes'); // Si tu utilises ce fich
 
 const app = express();
 
-// Connexion à la base de données
-const connectDB = async () => {
-  try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/plateforme-logistique');
+// État de la base de données
+let dbConnected = false;
 
+// Connexion à la base de données (avec retry)
+const connectDB = async (retryCount = 0) => {
+  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/plateforme-logistique';
+  const maxDelay = 30000; // 30s max entre les tentatives
+  try {
+    const conn = await mongoose.connect(uri);
+
+    dbConnected = true;
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     console.log(`📊 Database: ${conn.connection.name}`);
 
     await checkInitialData();
   } catch (error) {
-    console.error('❌ Database connection error:', error);
-    process.exit(1);
+    dbConnected = false;
+    const delay = Math.min(5000 * Math.pow(1.5, retryCount), maxDelay);
+    console.error(`❌ Database connection error (attempt ${retryCount + 1}):`, error?.message || error);
+    console.log(`⏳ Retry connecting to MongoDB in ${Math.round(delay / 1000)}s...`);
+    setTimeout(() => connectDB(retryCount + 1), delay);
   }
 };
+
+// Suivi des événements de connexion Mongoose
+mongoose.connection.on('connected', () => {
+  dbConnected = true;
+  console.log('🟢 Mongoose connection established');
+});
+mongoose.connection.on('error', (err) => {
+  dbConnected = false;
+  console.error('🔴 Mongoose connection error:', err?.message || err);
+});
+mongoose.connection.on('disconnected', () => {
+  dbConnected = false;
+  console.warn('🟠 Mongoose connection disconnected');
+});
 
 // Vérification des données initiales
 const checkInitialData = async () => {
@@ -118,7 +141,11 @@ app.get('/api/health', (req, res) => {
     message: '🚀 Plateforme Logistique API is running!',
     timestamp: new Date().toISOString(),
     version: '1.0.0',
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    database: {
+      connected: dbConnected,
+      uriDefined: Boolean(process.env.MONGODB_URI),
+    }
   });
 });
 
