@@ -1,0 +1,8 @@
+{
+  "nom": "Gérant",
+  "prenom": "Test",
+  "email": "gerant.test@example.com",
+  "telephone": "0700000012",
+  "role": "gerant",
+  "agence_id": "6900c1b37e8039e06aab1ee2"
+}

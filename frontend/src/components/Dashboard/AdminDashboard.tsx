@@ -122,6 +122,9 @@ const AdminDashboard: React.FC<Props> = ({ onNavigate, userName }) => {
       case 'view_reports':
         onNavigate('admin/reports');
         break;
+      case 'admin_history':
+        onNavigate('admin_history');
+        break;
       case 'system_settings':
         onNavigate('admin/settings');
         break;
