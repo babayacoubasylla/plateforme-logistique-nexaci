@@ -1,50 +1,54 @@
-const axios = require('axios');
+const mongoose = require('mongoose');
+require('dotenv').config();
+const User = require('./src/models/User');
 
-const API_BASE = 'http://localhost:5000/api';
-
-async function testAuth() {
+(async () => {
   try {
-    console.log('🧪 Testing Authentication API...\n');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/plateforme-logistique');
+    console.log('✅ Connected to MongoDB\n');
 
-    // Test 1: Health check
-    console.log('1. Testing health check...');
-    const healthResponse = await axios.get(`${API_BASE}/health`);
-    console.log('✅ Health:', healthResponse.data.message, '\n');
+    const tests = [
+      // Comptes garantis
+      { identifier: 'client1@example.com', password: 'client123' },
+      { identifier: 'livreur1@example.com', password: 'livreur123' },
+      { identifier: '0101010101', password: 'client123' },
+      { identifier: '0700000001', password: 'livreur123' },
+      { identifier: '+2250101010101', password: 'client123' },
+      { identifier: '+2250700000001', password: 'livreur123' },
 
-    // Test 2: Client login
-    console.log('2. Testing client login...');
-    const loginResponse = await axios.post(`${API_BASE}/auth/login`, {
-      email: 'client@logistique.ci',
-      password: 'client123'
-    });
-    
-    const token = loginResponse.data.data.token;
-    console.log('✅ Client login successful');
-    console.log('   User:', loginResponse.data.data.user.prenom, loginResponse.data.data.user.nom);
-    console.log('   Role:', loginResponse.data.data.user.role);
-    console.log('   Token received:', token ? 'YES' : 'NO', '\n');
+      // Comptes web seedés (supposés Passw0rd!)
+      { identifier: 'admin.web@example.com', password: 'Passw0rd!' },
+      { identifier: 'test.user.web@example.com', password: 'Passw0rd!' },
+      { identifier: 'livreur.test@example.com', password: 'Passw0rd!' },
+      { identifier: 'gerant.test@example.com', password: 'Passw0rd!' },
+    ];
 
-    // Test 3: Get profile with token
-    console.log('3. Testing protected route (get profile)...');
-    const profileResponse = await axios.get(`${API_BASE}/auth/me`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+    for (const t of tests) {
+      const isEmail = t.identifier.includes('@');
+      const query = isEmail 
+        ? { email: t.identifier.toLowerCase().trim() }
+        : { $or: [
+            { telephone: t.identifier },
+            { telephone: `+225${t.identifier}` },
+            { telephone: t.identifier.startsWith('+225') ? t.identifier : `+225${t.identifier}` },
+          ]};
+
+      const user = await User.findOne(query).select('+password');
+      
+      if (!user) {
+        console.log(`❌ User not found: ${t.identifier}`);
+        continue;
       }
-    });
-    console.log('✅ Profile access successful');
-    console.log('   Email:', profileResponse.data.data.user.email, '\n');
 
-    console.log('🎉 ALL AUTH TESTS PASSED!');
-    
-  } catch (error) {
-    console.error('❌ Test failed:');
-    if (error.response) {
-      console.error('   Status:', error.response.status);
-      console.error('   Message:', error.response.data.message);
-    } else {
-      console.error('   Error:', error.message);
+      const isMatch = await user.correctPassword(t.password, user.password);
+      const status = isMatch ? '✅ OK' : '❌ FAIL';
+      console.log(`${status} ${t.identifier} (${user.email}) → password match=${isMatch}, statut=${user.profile?.statut}`);
     }
-  }
-}
 
-testAuth();
+    await mongoose.connection.close();
+    console.log('\n📦 Connection closed');
+  } catch (e) {
+    console.error('❌ Error:', e);
+    process.exit(1);
+  }
+})();

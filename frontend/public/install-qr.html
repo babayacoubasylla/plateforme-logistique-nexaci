@@ -120,8 +120,9 @@
 
     // Préremplir avec les derniers builds Android (APK v2: logs + timeout 30s)
     try {
-      document.getElementById('apkClient').value = 'https://expo.dev/accounts/babayacoubasylla/projects/nexaci-client/builds/8fd91b25-f3a4-4880-a17a-bf9a400cc8c5';
-      document.getElementById('apkLivreur').value = 'https://expo.dev/accounts/babayacoubasylla/projects/nexaci-livreur/builds/c1f0220f-e6db-4b0d-80af-ac97d17bad30';
+      // Liens directs APK (artifacts) pour téléchargement immédiat
+      document.getElementById('apkClient').value = 'https://expo.dev/artifacts/eas/dKqddS6MELozK2hEQXmsmT.apk';
+      document.getElementById('apkLivreur').value = 'https://expo.dev/artifacts/eas/4dfNYJud6W6swiQNxKw1YW.apk';
     } catch {}
 
     bind('apkClient', 'apkClientLink', 'qr_apk_client');
