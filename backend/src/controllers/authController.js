@@ -30,15 +30,27 @@ exports.register = async (req, res) => {
       });
     }
 
+    // 🏢 Assigner une agence par défaut pour les nouveaux utilisateurs
+    const Agence = require('../models/Agence');
+    const agenceParDefaut = await Agence.findOne().sort({ createdAt: 1 }); // Première agence créée
+    
     // Créer le nouvel utilisateur
-    const newUser = await User.create({
+    const userData = {
       nom,
       prenom,
       email,
       telephone, // déjà normalisé en +225XXXXXXXXXX
       password,
       role: role || 'client',
-    });
+    };
+    
+    // Assigner l'agence par défaut si elle existe (sauf pour admin/super_admin)
+    if (agenceParDefaut && !['admin', 'super_admin'].includes(userData.role)) {
+      userData.profile = { agence: agenceParDefaut._id };
+      console.log(`🏢 Agence assignée à nouveau user: ${agenceParDefaut.nom}`);
+    }
+    
+    const newUser = await User.create(userData);
 
     // Générer le token JWT
     const token = generateToken({ id: newUser._id });
