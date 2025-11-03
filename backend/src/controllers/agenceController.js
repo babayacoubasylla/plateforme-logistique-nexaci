@@ -329,6 +329,14 @@ exports.getCoursiersByAgence = async (req, res) => {
       };
     }));
 
+    console.log(`📋 Livreurs trouvés pour agence ${id}: ${couriersWithCharges.length}`);
+    couriersWithCharges.forEach(l => console.log(`  - ${l.prenom} ${l.nom} (${l.email})`));
+
+    // ✅ Désactiver le cache pour toujours avoir les données fraîches
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    
     res.status(200).json({
       status: 'success',
       results: couriersWithCharges.length,
