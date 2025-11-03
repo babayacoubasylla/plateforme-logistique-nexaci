@@ -82,7 +82,7 @@
   </div>
 
   <footer>
-    Dernière mise à jour: 1 novembre 2025 — Collez vos liens (APK/TestFlight) et scannez. Si vous n'avez pas encore les APK, lancez les builds EAS Android (profil preview) pour générer les URLs.
+    Dernière mise à jour: 2 novembre 2025 — APK Client et Livreur disponibles (builds EAS terminés). Scannez pour installer sur Android.
   </footer>
 
   <script>
@@ -118,11 +118,11 @@
       update();
     }
 
-    // Préremplir avec les derniers builds Android (APK v2: logs + timeout 30s)
+    // Préremplir avec les derniers builds Android (APK mis à jour: 02/11/2025)
     try {
       // Liens directs APK (artifacts) pour téléchargement immédiat
       document.getElementById('apkClient').value = 'https://expo.dev/artifacts/eas/dKqddS6MELozK2hEQXmsmT.apk';
-      document.getElementById('apkLivreur').value = 'https://expo.dev/artifacts/eas/4dfNYJud6W6swiQNxKw1YW.apk';
+      document.getElementById('apkLivreur').value = 'https://expo.dev/artifacts/eas/eic97EjndtetKQQUmjWPvU.apk';
     } catch {}
 
     bind('apkClient', 'apkClientLink', 'qr_apk_client');
