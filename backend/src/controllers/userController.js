@@ -134,34 +134,36 @@ exports.updateUser = async (req, res) => {
     if (req.body.profile && req.body.profile.agence_id !== undefined) {
       // Si agence_id est fourni (même null pour dissocier)
       if (req.body.profile.agence_id) {
-        // Seuls les gérants peuvent avoir une agence associée
-        const nextRole = req.body.role || existingUser.role;
-        if (nextRole !== 'gerant') {
-          return res.status(400).json({
-            status: 'error',
-            message: 'Seuls les gérants peuvent être associés à une agence.'
-          });
-        }
-
         const agence = await Agence.findById(req.body.profile.agence_id);
         if (!agence) {
           return res.status(400).json({ status: 'error', message: 'Agence non trouvée.' });
         }
 
-        const existingGerant = await User.findOne({
-          _id: { $ne: req.params.id },
-          role: 'gerant',
-          'profile.agence': req.body.profile.agence_id
-        });
-        if (existingGerant) {
-          return res.status(400).json({ status: 'error', message: 'Cette agence est déjà assignée à un autre gérant.' });
+        // ✅ CORRECTION: Tous les rôles (sauf admin/super_admin) peuvent avoir une agence
+        // Seule restriction: une agence ne peut avoir qu'un seul gérant
+        const nextRole = req.body.role || existingUser.role;
+        if (nextRole === 'gerant') {
+          // Vérifier qu'il n'y a pas déjà un autre gérant pour cette agence
+          const existingGerant = await User.findOne({
+            _id: { $ne: req.params.id },
+            role: 'gerant',
+            'profile.agence': req.body.profile.agence_id
+          });
+          if (existingGerant) {
+            return res.status(400).json({ 
+              status: 'error', 
+              message: 'Cette agence est déjà assignée à un autre gérant.' 
+            });
+          }
         }
 
         // Remplacer agence_id par la clé correcte 'agence'
         req.body.profile.agence = req.body.profile.agence_id;
+        console.log(`✅ Agence ${agence.nom} assignée à user ${existingUser.email} (${nextRole})`);
       } else {
         // Si agence_id est null/false, dissocier l'agence
         req.body.profile.agence = null;
+        console.log(`🔓 Agence dissociée pour user ${existingUser.email}`);
       }
       delete req.body.profile.agence_id;
     }
