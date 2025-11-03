@@ -105,11 +105,18 @@ exports.createColis = async (req, res) => {
       pointRelais = agenceId;
     }
 
+    // Récupérer l'utilisateur complet pour obtenir son agence
+    const expediteur = await User.findById(req.user.id).select('profile.agence');
+    const agenceExpéditeur = expediteur?.profile?.agence || null;
+    
+    console.log('🏢 Agence de l\'expéditeur:', agenceExpéditeur);
+
     const fraisTransport = calculatePrice(details_colis.poids);
     const total = fraisTransport;
 
     const colisData = {
       expediteur: req.user.id,
+      agence: agenceExpéditeur, // ✅ Assigner l'agence de l'expéditeur
       destinataire: destinataire,
       pointRelais,
       typeLivraison,
@@ -398,10 +405,31 @@ exports.downloadReceiptByReference = async (req, res) => {
 // Récupérer tous les colis (admin seulement)
 exports.getAllColis = async (req, res) => {
   try {
-    const colis = await Colis.find()
+    let filter = {};
+    
+    // ✅ Si gérant, ne montrer que les colis de son agence
+    if (req.user.role === 'gerant') {
+      const gerant = await User.findById(req.user.id).select('profile.agence');
+      const agenceId = gerant?.profile?.agence;
+      
+      if (!agenceId) {
+        return res.status(403).json({
+          status: 'error',
+          message: 'Gérant non assigné à une agence'
+        });
+      }
+      
+      filter.agence = agenceId;
+      console.log('🏢 Filtrage colis pour agence:', agenceId);
+    }
+    
+    const colis = await Colis.find(filter)
       .populate('expediteur', 'nom prenom email telephone')
+      .populate('agence', 'nom ville')
       .populate('pointRelais', 'nom adresse ville')
       .sort({ createdAt: -1 });
+
+    console.log(`📦 Colis trouvés pour ${req.user.role}:`, colis.length);
 
     res.status(200).json({
       status: 'success',

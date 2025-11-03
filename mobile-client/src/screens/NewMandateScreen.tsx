@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import Toast from 'react-native-toast-message';
 import * as Contacts from 'expo-contacts';
 import * as Location from 'expo-location';
@@ -109,11 +109,21 @@ export default function NewMandateScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Nouveau Mandat</Text>
-      {loadingLists ? (
-        <View style={{ paddingVertical: theme.spacing.md }}><ActivityIndicator /></View>
-      ) : (
+    <KeyboardAvoidingView 
+      style={{ flex: 1 }} 
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+    >
+      <ScrollView 
+        style={styles.container}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.title}>Nouveau Mandat</Text>
+        {loadingLists ? (
+          <View style={{ paddingVertical: theme.spacing.md }}><ActivityIndicator /></View>
+        ) : (
         <>
           <Text style={styles.label}>Type de document</Text>
           <FlatList
@@ -189,12 +199,14 @@ export default function NewMandateScreen() {
           </TouchableOpacity>
         </>
       )}
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: theme.spacing.lg, backgroundColor: '#f9fafb' },
+  container: { flex: 1, backgroundColor: '#f9fafb' },
+  scrollContent: { padding: theme.spacing.lg, paddingBottom: theme.spacing.xl },
   title: { ...theme.typography.title, marginBottom: theme.spacing.lg },
   label: { ...theme.typography.label, marginBottom: theme.spacing.xs, marginTop: theme.spacing.md },
   input: { borderWidth: 1, borderColor: '#d1d5db', borderRadius: theme.borderRadius.md, padding: theme.spacing.md, backgroundColor: '#fff', ...theme.typography.body },

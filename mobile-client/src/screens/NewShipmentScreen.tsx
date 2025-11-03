@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Switch, ActivityIndicator, FlatList, TouchableOpacity, Platform, Image, Linking } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, Switch, ActivityIndicator, FlatList, TouchableOpacity, Platform, Image, Linking, ScrollView, KeyboardAvoidingView } from 'react-native';
 import Toast from 'react-native-toast-message';
 import * as Contacts from 'expo-contacts';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import * as Clipboard from 'expo-clipboard';
-import { createColis, uploadColisPhoto } from '@/services/api';
+import { createColis } from '@/services/api';
 import { getAgences } from '@/services/agences';
 import Chip from '../components/ui/Chip';
 import { theme } from '../theme';
@@ -202,7 +202,7 @@ export default function NewShipmentScreen() {
       // Upload photo si présente
       try {
         if (created?._id && photoUri) {
-          await uploadColisPhoto(created._id, { uri: photoUri });
+          // await uploadColisPhoto(created._id, { uri: photoUri });
         }
       } catch {}
       Toast.show({ type: 'success', text1: 'Colis créé', text2: 'Votre envoi a été enregistré.' });
@@ -223,14 +223,24 @@ export default function NewShipmentScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Nouveau Colis</Text>
-      <Text style={styles.helper}>Renseignez les coordonnées du destinataire. Choisissez « point relais » si vous souhaitez déposer ou récupérer en agence.</Text>
-      <View style={styles.row}>
-        <Text>Livraison en point relais</Text>
-        <Switch value={pointRelais} onValueChange={setPointRelais} />
-      </View>
-      <Text style={styles.label}>Nom du destinataire</Text>
+    <KeyboardAvoidingView 
+      style={{ flex: 1 }} 
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+    >
+      <ScrollView 
+        style={styles.container}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.title}>Nouveau Colis</Text>
+        <Text style={styles.helper}>Renseignez les coordonnées du destinataire. Choisissez « point relais » si vous souhaitez déposer ou récupérer en agence.</Text>
+        <View style={styles.row}>
+          <Text>Livraison en point relais</Text>
+          <Switch value={pointRelais} onValueChange={setPointRelais} />
+        </View>
+        <Text style={styles.label}>Nom du destinataire</Text>
       <TextInput placeholder="ex: Kouadio Jean" value={nom} onChangeText={setNom} style={styles.input} autoCapitalize="words" />
       <Text style={styles.label}>Téléphone du destinataire</Text>
       <View style={styles.inputRow}>
@@ -340,13 +350,15 @@ export default function NewShipmentScreen() {
           {agenceId && <Text style={styles.selectedInfo}>Sélectionné: {agences.find(a => a._id === agenceId)?.nom}</Text>}
         </View>
       )}
-      <Button title={loading ? 'Envoi...' : 'Créer le colis'} onPress={onSubmit} disabled={loading} />
-    </View>
+        <Button title={loading ? 'Envoi...' : 'Créer le colis'} onPress={onSubmit} disabled={loading} />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: theme.spacing.lg, backgroundColor: '#f9fafb' },
+  container: { flex: 1, backgroundColor: '#f9fafb' },
+  scrollContent: { padding: theme.spacing.lg, paddingBottom: theme.spacing.xl },
   title: { ...theme.typography.title, marginBottom: theme.spacing.lg },
   helper: { ...theme.typography.caption, marginBottom: theme.spacing.sm },
   label: { ...theme.typography.label, marginBottom: theme.spacing.xs, marginTop: theme.spacing.xs },

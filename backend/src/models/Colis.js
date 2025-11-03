@@ -16,6 +16,9 @@ const colisSchema = new mongoose.Schema({
       repères: String
     }
   },
+  // Agence qui gère le colis (agence de l'expéditeur)
+  agence: { type: mongoose.Schema.Types.ObjectId, ref: 'Agence' },
+  // Point relais pour retrait (optionnel, uniquement si typeLivraison = point_relais)
   pointRelais: { type: mongoose.Schema.Types.ObjectId, ref: 'Agence' },
   typeLivraison: { type: String, enum: ['domicile', 'point_relais'], default: 'domicile' },
   details_colis: {
