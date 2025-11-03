@@ -45,12 +45,28 @@ exports.createUser = async (req, res) => {
     // Mapper agence_id -> profile.agence si fourni
     let mappedProfile = profile || {};
     const agenceId = profile?.agence_id || req.body.agence_id;
+    
+    console.log(`👤 Création user: ${email} (${role || 'client'})`);
+    console.log(`🏢 agence_id reçu:`, agenceId || 'AUCUN');
+    
     if (agenceId) {
       const agence = await Agence.findById(agenceId);
       if (!agence) {
         return res.status(400).json({ status: 'error', message: 'Agence non trouvée.' });
       }
       mappedProfile = { ...mappedProfile, agence: agence._id };
+      console.log(`✅ Agence assignée: ${agence.nom}`);
+    } else {
+      // ✅ CORRECTION: Si aucune agence fournie et role nécessite une agence, assigner agence par défaut
+      if (role && !['admin', 'super_admin'].includes(role)) {
+        const agenceParDefaut = await Agence.findOne().sort({ createdAt: 1 });
+        if (agenceParDefaut) {
+          mappedProfile = { ...mappedProfile, agence: agenceParDefaut._id };
+          console.log(`🏢 Agence par défaut assignée: ${agenceParDefaut.nom}`);
+        } else {
+          console.log(`⚠️ Aucune agence par défaut disponible`);
+        }
+      }
     }
 
     // Générer un mot de passe temporaire si non fourni (UI admin ne demande pas le mot de passe)
@@ -65,6 +81,8 @@ exports.createUser = async (req, res) => {
       password: tempPassword,
       profile: mappedProfile
     });
+    
+    console.log(`✅ User créé: ${newUser.email} - Profile.agence: ${newUser.profile?.agence || 'AUCUNE'}`);
 
     const userResponse = {
       id: newUser._id,
