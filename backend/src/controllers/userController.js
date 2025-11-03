@@ -189,9 +189,11 @@ exports.updateUser = async (req, res) => {
       },
     });
   } catch (error) {
+    console.error('❌ updateUser error:', error);
     res.status(400).json({
       status: 'error',
-      message: error.message,
+      message: error.message || 'Erreur lors de la mise à jour',
+      details: error.errors ? Object.keys(error.errors).map(k => error.errors[k].message) : undefined
     });
   }
 };

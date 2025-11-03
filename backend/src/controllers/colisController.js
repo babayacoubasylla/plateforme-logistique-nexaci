@@ -186,19 +186,19 @@ exports.assignLivreur = async (req, res) => {
       return res.status(404).json({ status: 'error', message: 'Colis non trouvé.' });
     }
 
-    // Permissions: admin/super_admin ou gérant de l'agence point relais
+    // Permissions: admin/super_admin ou gérant de l'agence du colis
     const isAdmin = ['admin', 'super_admin'].includes(req.user.role);
     let isGerantOfAgence = false;
-    if (req.user.role === 'gerant' && colis.pointRelais) {
-      // On doit récupérer l'agence pour confirmer le gerant
-      const agence = await Agence.findById(colis.pointRelais);
-      if (agence) {
-        isGerantOfAgence = agence.gerant.toString() === req.user.id.toString();
-      }
+    if (req.user.role === 'gerant') {
+      // Vérifier que le gérant appartient à l'agence du colis
+      const gerant = await User.findById(req.user.id).select('profile.agence');
+      const userAgenceId = gerant?.profile?.agence?.toString();
+      const colisAgenceId = colis.agence?.toString();
+      isGerantOfAgence = userAgenceId && userAgenceId === colisAgenceId;
     }
 
     if (!isAdmin && !isGerantOfAgence) {
-      return res.status(403).json({ status: 'error', message: 'Accès refusé.' });
+      return res.status(403).json({ status: 'error', message: 'Accès refusé. Vous ne gérez pas cette agence.' });
     }
 
     // Valider le coursier
@@ -402,7 +402,7 @@ exports.downloadReceiptByReference = async (req, res) => {
   }
 };
 
-// Récupérer tous les colis (admin seulement)
+// Récupérer tous les colis (admin voit tout, gérant voit son agence)
 exports.getAllColis = async (req, res) => {
   try {
     let filter = {};
@@ -422,14 +422,16 @@ exports.getAllColis = async (req, res) => {
       filter.agence = agenceId;
       console.log('🏢 Filtrage colis pour agence:', agenceId);
     }
+    // Pour admin/super_admin: pas de filtre (voir tous les colis)
     
     const colis = await Colis.find(filter)
       .populate('expediteur', 'nom prenom email telephone')
       .populate('agence', 'nom ville')
       .populate('pointRelais', 'nom adresse ville')
+      .populate('livreur', 'nom prenom telephone')
       .sort({ createdAt: -1 });
 
-    console.log(`📦 Colis trouvés pour ${req.user.role}:`, colis.length);
+    console.log(`📦 Colis trouvés pour ${req.user.role} (${req.user.email}):`, colis.length);
 
     res.status(200).json({
       status: 'success',
