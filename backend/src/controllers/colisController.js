@@ -106,17 +106,22 @@ exports.createColis = async (req, res) => {
     }
 
     // Récupérer l'utilisateur complet pour obtenir son agence
-    const expediteur = await User.findById(req.user.id).select('profile.agence');
+    const expediteur = await User.findById(req.user.id).select('nom prenom email role profile.agence');
     const agenceExpéditeur = expediteur?.profile?.agence || null;
     
-    console.log('🏢 Agence de l\'expéditeur:', agenceExpéditeur);
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('📦 CRÉATION DE COLIS:');
+    console.log(`👤 Expéditeur: ${expediteur.email} (${expediteur.role})`);
+    console.log(`🏢 Agence expéditeur:`, agenceExpéditeur || '❌ AUCUNE');
+    console.log(`📍 Type livraison: ${typeLivraison}`);
+    console.log(`⚖️  Poids: ${details_colis.poids} kg`);
 
     const fraisTransport = calculatePrice(details_colis.poids);
     const total = fraisTransport;
 
     const colisData = {
       expediteur: req.user.id,
-      agence: agenceExpéditeur, // ✅ Assigner l'agence de l'expéditeur
+      agence: agenceExpéditeur, // ✅ Assigner l'agence de l'expéditeur (peut être null)
       destinataire: destinataire,
       pointRelais,
       typeLivraison,
@@ -128,13 +133,28 @@ exports.createColis = async (req, res) => {
       paiement
     };
 
+    console.log('💾 Données colis avant sauvegarde:', {
+      expediteur: colisData.expediteur,
+      agence: colisData.agence,
+      typeLivraison: colisData.typeLivraison,
+      statut: 'en_attente'
+    });
+
     const colis = await Colis.create(colisData);
     await colis.populate('expediteur', 'nom prenom email telephone');
     if (pointRelais) {
       await colis.populate('pointRelais', 'nom adresse ville');
     }
+    if (colis.agence) {
+      await colis.populate('agence', 'nom ville');
+    }
 
-    console.log('✅ Colis created successfully:', colis.reference);
+    console.log('✅ COLIS CRÉÉ AVEC SUCCÈS!');
+    console.log(`   Référence: ${colis.reference}`);
+    console.log(`   ID: ${colis._id}`);
+    console.log(`   Agence: ${colis.agence?.nom || '❌ AUCUNE'}`);
+    console.log(`   Statut: ${colis.statut}`);
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
     // 📱 Envoyer notification WhatsApp au client
     notificationService.notifyColisCreated(colis).catch(err => 
@@ -406,13 +426,21 @@ exports.downloadReceiptByReference = async (req, res) => {
 exports.getAllColis = async (req, res) => {
   try {
     let filter = {};
+    let filterDescription = 'TOUS LES COLIS (admin)';
+    
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('📋 GET ALL COLIS:');
+    console.log(`👤 Utilisateur: ${req.user.email} (${req.user.role})`);
     
     // ✅ Si gérant, ne montrer que les colis de son agence
     if (req.user.role === 'gerant') {
       const gerant = await User.findById(req.user.id).select('profile.agence');
       const agenceId = gerant?.profile?.agence;
       
+      console.log(`🏢 Gérant agence ID:`, agenceId || '❌ AUCUNE');
+      
       if (!agenceId) {
+        console.log('❌ Gérant sans agence assignée!');
         return res.status(403).json({
           status: 'error',
           message: 'Gérant non assigné à une agence'
@@ -420,9 +448,12 @@ exports.getAllColis = async (req, res) => {
       }
       
       filter.agence = agenceId;
-      console.log('🏢 Filtrage colis pour agence:', agenceId);
+      filterDescription = `Colis de l'agence ${agenceId}`;
     }
-    // Pour admin/super_admin: pas de filtre (voir tous les colis)
+    // Pour admin/super_admin: pas de filtre (voir tous les colis, même sans agence)
+    
+    console.log(`🔍 Filtre appliqué: ${filterDescription}`);
+    console.log(`   Filter MongoDB:`, JSON.stringify(filter));
     
     const colis = await Colis.find(filter)
       .populate('expediteur', 'nom prenom email telephone')
@@ -431,7 +462,20 @@ exports.getAllColis = async (req, res) => {
       .populate('livreur', 'nom prenom telephone')
       .sort({ createdAt: -1 });
 
-    console.log(`📦 Colis trouvés pour ${req.user.role} (${req.user.email}):`, colis.length);
+    console.log(`✅ RÉSULTAT: ${colis.length} colis trouvé(s)`);
+    
+    if (colis.length > 0) {
+      console.log('   Aperçu des colis:');
+      colis.slice(0, 3).forEach(c => {
+        console.log(`   - ${c.reference} | Agence: ${c.agence?.nom || '❌ AUCUNE'} | Statut: ${c.statut} | Exp: ${c.expediteur?.email}`);
+      });
+      if (colis.length > 3) {
+        console.log(`   ... et ${colis.length - 3} autres colis`);
+      }
+    } else {
+      console.log('   ⚠️ AUCUN COLIS TROUVÉ avec ce filtre!');
+    }
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
     res.status(200).json({
       status: 'success',
