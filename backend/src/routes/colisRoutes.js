@@ -34,6 +34,9 @@ router.get('/assigned', restrictTo('livreur', 'admin', 'super_admin'), require('
 router.get('/history/my', restrictTo('livreur', 'admin', 'super_admin'), getMyColisHistory);
 // Télécharger reçu PDF par référence (client connecté)
 router.get('/receipt/ref/:reference', downloadReceiptByReference);
+// Route pour obtenir les colis par agence (AVANT les routes /:id pour éviter les conflits)
+router.get('/agence/:id', restrictTo('admin', 'super_admin', 'gerant'), getColisByAgence);
+
 // Routes pour tous les utilisateurs authentifiés
 router.get('/:id', getColis);
 router.get('/:id/receipt', downloadColisReceipt);
@@ -44,9 +47,6 @@ router.patch('/:id/photo', require('../controllers/colisController').uploadColis
 router.patch('/:id/status', restrictTo('admin', 'super_admin', 'gerant', 'livreur'), updateColisStatus);
 // Assigner un livreur à un colis (admin/super_admin/gerant)
 router.patch('/:id/assign', restrictTo('admin', 'super_admin', 'gerant'), assignLivreur);
-
-// Route pour obtenir les colis par agence (accessible aux gérants et admins)
-router.get('/agence/:id', restrictTo('admin', 'super_admin', 'gerant'), getColisByAgence);
 
 // Historique des colis par agence
 router.get('/history/agence/:id', restrictTo('admin', 'super_admin', 'gerant'), getColisHistoryByAgence);

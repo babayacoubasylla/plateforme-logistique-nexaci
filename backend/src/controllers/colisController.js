@@ -549,25 +549,30 @@ exports.getColisByAgence = async (req, res) => {
       return res.status(404).json({ status: 'error', message: 'Agence non trouvée.' });
     }
 
-    // 🔒 Vérification : seul le gérant de l'agence ou un admin peut accéder
+    // 🔒 Vérification : seul le gérant de l'agence (via profile.agence) ou un admin peut accéder
     if (
       req.user.role !== 'admin' &&
-      req.user.role !== 'super_admin' &&
-      req.user.id.toString() !== agence.gerant.toString()
+      req.user.role !== 'super_admin'
     ) {
-      return res.status(403).json({
-        status: 'error',
-        message: 'Vous n\'êtes pas autorisé à accéder à cette agence.'
-      });
+      // Vérifier que le gérant appartient bien à cette agence
+      const userAgenceId = req.user.profile?.agence?.toString();
+      if (userAgenceId !== id) {
+        return res.status(403).json({
+          status: 'error',
+          message: 'Vous n\'êtes pas autorisé à accéder à cette agence.'
+        });
+      }
     }
 
+    // Filtrer par le champ "agence" (agence de gestion) et non "pointRelais"
     const colis = await Colis.find({
-      pointRelais: id,
+      agence: id,
       statut: { $in: ['en_attente', 'pris_en_charge', 'en_livraison'] }
     })
     .populate('expediteur', 'nom prenom telephone')
     .populate('livreur', 'nom prenom telephone')
     .populate('pointRelais', 'nom adresse ville')
+    .populate('agence', 'nom adresse ville')
     .sort({ createdAt: -1 });
 
     res.status(200).json({

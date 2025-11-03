@@ -131,32 +131,38 @@ exports.updateUser = async (req, res) => {
     }
 
     // Valider l'association d'agence (mapper agence_id -> profile.agence)
-    if (req.body.profile?.agence_id) {
-      // Seuls les gérants peuvent avoir une agence associée
-      const nextRole = req.body.role || existingUser.role;
-      if (nextRole !== 'gerant') {
-        return res.status(400).json({
-          status: 'error',
-          message: 'Seuls les gérants peuvent être associés à une agence.'
+    if (req.body.profile && req.body.profile.agence_id !== undefined) {
+      // Si agence_id est fourni (même null pour dissocier)
+      if (req.body.profile.agence_id) {
+        // Seuls les gérants peuvent avoir une agence associée
+        const nextRole = req.body.role || existingUser.role;
+        if (nextRole !== 'gerant') {
+          return res.status(400).json({
+            status: 'error',
+            message: 'Seuls les gérants peuvent être associés à une agence.'
+          });
+        }
+
+        const agence = await Agence.findById(req.body.profile.agence_id);
+        if (!agence) {
+          return res.status(400).json({ status: 'error', message: 'Agence non trouvée.' });
+        }
+
+        const existingGerant = await User.findOne({
+          _id: { $ne: req.params.id },
+          role: 'gerant',
+          'profile.agence': req.body.profile.agence_id
         });
-      }
+        if (existingGerant) {
+          return res.status(400).json({ status: 'error', message: 'Cette agence est déjà assignée à un autre gérant.' });
+        }
 
-      const agence = await Agence.findById(req.body.profile.agence_id);
-      if (!agence) {
-        return res.status(400).json({ status: 'error', message: 'Agence non trouvée.' });
+        // Remplacer agence_id par la clé correcte 'agence'
+        req.body.profile.agence = req.body.profile.agence_id;
+      } else {
+        // Si agence_id est null/false, dissocier l'agence
+        req.body.profile.agence = null;
       }
-
-      const existingGerant = await User.findOne({
-        _id: { $ne: req.params.id },
-        role: 'gerant',
-        'profile.agence': req.body.profile.agence_id
-      });
-      if (existingGerant) {
-        return res.status(400).json({ status: 'error', message: 'Cette agence est déjà assignée à un autre gérant.' });
-      }
-
-      // Remplacer agence_id par la clé correcte 'agence'
-      req.body.profile.agence = req.body.profile.agence_id;
       delete req.body.profile.agence_id;
     }
 
