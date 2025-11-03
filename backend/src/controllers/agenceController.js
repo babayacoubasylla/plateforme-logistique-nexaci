@@ -279,10 +279,30 @@ exports.getCoursiersByAgence = async (req, res) => {
 
     // 2) Autorisations: admin/super_admin ou gérant de l'agence
     const isAdmin = ['admin', 'super_admin'].includes(req.user.role);
-    const isGerantOfAgence = req.user.role === 'gerant' && agence.gerant.toString() === req.user.id.toString();
+    
+    // ✅ CORRECTION: Vérifier les deux façons d'identifier un gérant
+    // 1. Par agence.gerant (champ dans Agence)
+    // 2. Par user.profile.agence (champ dans User)
+    let isGerantOfAgence = false;
+    if (req.user.role === 'gerant') {
+      // Méthode 1: Le user est-il le gérant référencé dans l'agence?
+      const isGerantDirect = agence.gerant?.toString() === req.user.id;
+      
+      // Méthode 2: Le user a-t-il cette agence dans son profile?
+      const gerant = await User.findById(req.user.id).select('profile.agence');
+      const isGerantProfile = gerant?.profile?.agence?.toString() === id;
+      
+      isGerantOfAgence = isGerantDirect || isGerantProfile;
+      
+      console.log(`🔍 Vérification gérant: isGerantDirect=${isGerantDirect}, isGerantProfile=${isGerantProfile}`);
+    }
+    
     if (!isAdmin && !isGerantOfAgence) {
+      console.log(`❌ Accès refusé: role=${req.user.role}, agence=${id}, userId=${req.user.id}`);
       return res.status(403).json({ status: 'error', message: 'Accès refusé.' });
     }
+    
+    console.log(`✅ Accès autorisé pour récupérer coursiers: role=${req.user.role}, isAdmin=${isAdmin}, isGerantOfAgence=${isGerantOfAgence}`);
 
     // 3) Récupérer les utilisateurs avec rôle livreur affectés à cette agence
     const livreurs = await User.find({
