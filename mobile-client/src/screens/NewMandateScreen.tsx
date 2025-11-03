@@ -206,7 +206,7 @@ export default function NewMandateScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f9fafb' },
-  scrollContent: { padding: theme.spacing.lg, paddingBottom: theme.spacing.xl },
+  scrollContent: { padding: theme.spacing.lg, paddingBottom: 120 },
   title: { ...theme.typography.title, marginBottom: theme.spacing.lg },
   label: { ...theme.typography.label, marginBottom: theme.spacing.xs, marginTop: theme.spacing.md },
   input: { borderWidth: 1, borderColor: '#d1d5db', borderRadius: theme.borderRadius.md, padding: theme.spacing.md, backgroundColor: '#fff', ...theme.typography.body },

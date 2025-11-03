@@ -358,7 +358,7 @@ export default function NewShipmentScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f9fafb' },
-  scrollContent: { padding: theme.spacing.lg, paddingBottom: theme.spacing.xl },
+  scrollContent: { padding: theme.spacing.lg, paddingBottom: 120 },
   title: { ...theme.typography.title, marginBottom: theme.spacing.lg },
   helper: { ...theme.typography.caption, marginBottom: theme.spacing.sm },
   label: { ...theme.typography.label, marginBottom: theme.spacing.xs, marginTop: theme.spacing.xs },

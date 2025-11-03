@@ -33,7 +33,8 @@ export default function ColisDetailScreen({ route }: Props) {
       const { default: AsyncStorage } = await import('@react-native-async-storage/async-storage');
       const token = await AsyncStorage.getItem('token');
       const url = `${API_URL}/api/colis/${colis._id}/receipt`;
-      const fileUri = `${FileSystem.cacheDirectory}recu-colis-${colis.reference}.pdf`;
+  const cacheDir = (FileSystem as any).cacheDirectory || (FileSystem as any).documentDirectory || '';
+  const fileUri = `${cacheDir}recu-colis-${colis.reference}.pdf`;
       const dl = await FileSystem.downloadAsync(url, fileUri, {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined
       });

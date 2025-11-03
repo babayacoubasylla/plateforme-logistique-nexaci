@@ -6,7 +6,8 @@
       "esnext"
     ],
     "jsx": "react-jsx",
-    "moduleResolution": "node",
+  // Pour compatibilité avec Expo/Metro et l'option customConditions du preset Expo
+  "moduleResolution": "bundler",
     "allowJs": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
