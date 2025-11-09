@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom'; // Retiré si non utilisé
 import { useAuth } from '../../context/AuthContext'; // Import du hook d'authentification
-import { statsService } from '../../services/statsService'; // Service pour les stats gérant
-import StatCard from './components/StatCard';
+// import { statsService } from '../../services/statsService'; // Service pour les stats gérant
+// import StatCard from './components/StatCard';
 // import ActivityFeed from './components/ActivityFeed'; // Décommente si tu l'utilises
-import QuickActions from './components/QuickActions';
+// import QuickActions from './components/QuickActions';
 import { Page } from '../../types';
 // Styles déplacés vers index.css pour cohérence globale
 
@@ -109,64 +109,227 @@ const GerantDashboard: React.FC<Props> = ({ onNavigate, userName }) => {
   if (!stats) return <div className="dashboard-no-data">Aucune donnée disponible.</div>;
 
   return (
-    <div className="gerant-dashboard">
-      <header className="dashboard-header">
-        <h1>Bonjour, {userName} !</h1>
-        <p>Gestion de votre agence logistique.</p>
-      </header>
-
-      <section className="dashboard-stats">
-        <h2>Statistiques de l'Agence</h2>
-        <div className="stats-grid">
-          <StatCard title="Colis Total" value={stats.colis_agence.total} />
-          <StatCard title="Mandats Total" value={stats.mandats_agence.total} />
-          <StatCard title="Chiffre d'Affaires (Mois)" value={`XOF ${stats.performance.chiffre_affaires_mensuel.toLocaleString()}`} />
-          <StatCard title="Taux de Livraison" value={`${stats.performance.taux_livraison}%`} />
-        </div>
-      </section>
-
-      <section className="dashboard-summary">
-        <h2>Suivi des Opérations</h2>
-        <div className="summary-grid">
-          <div className="summary-item">
-            <h3>Colis</h3>
-            <p>En Préparation: {stats.colis_agence.en_preparation}</p>
-            <p>Pris en Charge: {stats.colis_agence.pris_en_charge}</p>
-            <p>En Transit: {stats.colis_agence.en_transit}</p>
-            <p>En Livraison: {stats.colis_agence.en_livraison}</p>
-            <p>Livrés: {stats.colis_agence.livres}</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header avec thème ivoirien */}
+        <header className="bg-gradient-to-r from-orange-ivoirien to-orange-500 rounded-lg shadow-lg p-6 mb-6 relative overflow-hidden">
+          {/* Bande drapeau ivoirien */}
+          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-orange-ivoirien via-white to-vert-ivoirien"></div>
+          
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-white/20 rounded-full">
+              <span className="text-3xl">🏢</span>
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">
+                Bonjour, {userName} ! 🇨🇮
+              </h1>
+              <p className="text-orange-100">
+                Gestion de votre agence logistique ivoirienne
+              </p>
+            </div>
           </div>
-          <div className="summary-item">
-            <h3>Mandats</h3>
-            <p>Docs Vérifiés: {stats.mandats_agence.documents_verifies}</p>
-            <p>Procuration Signée: {stats.mandats_agence.procuration_signee}</p>
-            <p>Déposé Admin: {stats.mandats_agence.depose_administration}</p>
-            <p>En Traitement: {stats.mandats_agence.en_traitement}</p>
-            <p>En Livraison: {stats.mandats_agence.en_livraison}</p>
-            <p>Livrés: {stats.mandats_agence.livres}</p>
+        </header>
+
+        {/* Statistiques avec style ivoirien */}
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <span className="text-orange-ivoirien">📊</span>
+            Statistiques de l'Agence
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-orange-ivoirien hover:shadow-xl transition-all">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-600 text-sm font-medium">Colis Total</p>
+                  <p className="text-3xl font-bold text-orange-ivoirien">{stats.colis_agence.total}</p>
+                </div>
+                <div className="p-3 bg-orange-100 rounded-full">
+                  <span className="text-orange-ivoirien text-xl">📦</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-vert-ivoirien hover:shadow-xl transition-all">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-600 text-sm font-medium">Mandats Total</p>
+                  <p className="text-3xl font-bold text-vert-ivoirien">{stats.mandats_agence.total}</p>
+                </div>
+                <div className="p-3 bg-green-100 rounded-full">
+                  <span className="text-vert-ivoirien text-xl">🏛️</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-orange-ivoirien hover:shadow-xl transition-all">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-600 text-sm font-medium">Chiffre d'Affaires</p>
+                  <p className="text-2xl font-bold text-orange-ivoirien">{stats.performance.chiffre_affaires_mensuel.toLocaleString()} FCFA</p>
+                </div>
+                <div className="p-3 bg-orange-100 rounded-full">
+                  <span className="text-orange-ivoirien text-xl">💰</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-lg shadow-lg p-6 border-l-4 border-vert-ivoirien hover:shadow-xl transition-all">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-600 text-sm font-medium">Taux de Livraison</p>
+                  <p className="text-3xl font-bold text-vert-ivoirien">{stats.performance.taux_livraison}%</p>
+                </div>
+                <div className="p-3 bg-green-100 rounded-full">
+                  <span className="text-vert-ivoirien text-xl">📈</span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* <section className="dashboard-activity">
-        <h2>Activité Récente de l'Agence</h2>
-        ... (Afficher les derniers colis/mandats assignés à l'agence)
-      </section> */}
+        {/* Suivi des opérations avec design ivoirien */}
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <span className="text-vert-ivoirien">📋</span>
+            Suivi des Opérations
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-xl font-semibold text-orange-ivoirien mb-4 flex items-center gap-2">
+                📦 Colis
+              </h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
+                  <span className="text-gray-700">En Préparation</span>
+                  <span className="bg-orange-ivoirien text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {stats.colis_agence.en_preparation}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                  <span className="text-gray-700">Pris en Charge</span>
+                  <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {stats.colis_agence.pris_en_charge}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-indigo-50 rounded-lg">
+                  <span className="text-gray-700">En Transit</span>
+                  <span className="bg-indigo-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {stats.colis_agence.en_transit}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                  <span className="text-gray-700">En Livraison</span>
+                  <span className="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {stats.colis_agence.en_livraison}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                  <span className="text-gray-700">Livrés</span>
+                  <span className="bg-vert-ivoirien text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {stats.colis_agence.livres}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-xl font-semibold text-vert-ivoirien mb-4 flex items-center gap-2">
+                🏛️ Mandats
+              </h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
+                  <span className="text-gray-700">Docs Vérifiés</span>
+                  <span className="bg-orange-ivoirien text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {stats.mandats_agence.documents_verifies}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                  <span className="text-gray-700">Procuration Signée</span>
+                  <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {stats.mandats_agence.procuration_signee}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-indigo-50 rounded-lg">
+                  <span className="text-gray-700">Déposé Admin</span>
+                  <span className="bg-indigo-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {stats.mandats_agence.depose_administration}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                  <span className="text-gray-700">En Traitement</span>
+                  <span className="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {stats.mandats_agence.en_traitement}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                  <span className="text-gray-700">Livrés</span>
+                  <span className="bg-vert-ivoirien text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {stats.mandats_agence.livres}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-      <section className="dashboard-actions">
-        <h2>Outils de Gestion</h2>
-        <QuickActions
-          actions={[
-            { id: 'manage_shipments', label: 'Gérer les Colis', icon: '📦' },
-            { id: 'manage_mandates', label: 'Gérer les Mandats', icon: '🏛️' },
-            { id: 'assign_couriers', label: 'Assigner Coursiers', icon: '🚴‍♂️' },
-            { id: 'gerant_history', label: 'Historique Agence', icon: '📜' },
-            { id: 'view_reports', label: 'Rapports', icon: '📈' },
-            { id: 'logout', label: 'Se Déconnecter', icon: '🚪' },
-          ]}
-          onAction={handleActionClick}
-        />
-      </section>
+        {/* Actions avec thème ivoirien */}
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <span className="text-orange-ivoirien">🛠️</span>
+            Outils de Gestion
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <button 
+              onClick={() => handleActionClick('manage_shipments')}
+              className="bg-gradient-to-r from-orange-ivoirien to-orange-500 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center gap-3"
+            >
+              <span className="text-2xl">📦</span>
+              <span className="font-semibold">Gérer les Colis</span>
+            </button>
+            
+            <button 
+              onClick={() => handleActionClick('manage_mandates')}
+              className="bg-gradient-to-r from-vert-ivoirien to-green-500 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center gap-3"
+            >
+              <span className="text-2xl">🏛️</span>
+              <span className="font-semibold">Gérer les Mandats</span>
+            </button>
+            
+            <button 
+              onClick={() => handleActionClick('assign_couriers')}
+              className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center gap-3"
+            >
+              <span className="text-2xl">🚴‍♂️</span>
+              <span className="font-semibold">Assigner Coursiers</span>
+            </button>
+            
+            <button 
+              onClick={() => handleActionClick('gerant_history')}
+              className="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center gap-3"
+            >
+              <span className="text-2xl">📜</span>
+              <span className="font-semibold">Historique Agence</span>
+            </button>
+            
+            <button 
+              onClick={() => handleActionClick('view_reports')}
+              className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center gap-3"
+            >
+              <span className="text-2xl">📈</span>
+              <span className="font-semibold">Rapports</span>
+            </button>
+            
+            <button 
+              onClick={() => handleActionClick('logout')}
+              className="bg-gradient-to-r from-red-500 to-red-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center gap-3"
+            >
+              <span className="text-2xl">🚪</span>
+              <span className="font-semibold">Se Déconnecter</span>
+            </button>
+          </div>
+        </section>
+      </div>
     </div>
   );
 };

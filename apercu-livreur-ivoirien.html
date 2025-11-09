@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇨🇮 Nexaci Livreur - Aperçu Thème Ivoirien</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(180deg, #009639, #22c55e);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .phone-container {
+            max-width: 375px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            min-height: 667px;
+        }
+        
+        .status-bar {
+            background: #009639;
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #009639, #22c55e);
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .header .subtitle {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .content {
+            padding: 20px;
+            background: #f8fafc;
+            min-height: 500px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #ff7300;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff7300;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .delivery-section {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            color: #009639;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .delivery-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-left: 4px solid #ff7300;
+        }
+        
+        .delivery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .delivery-id {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .delivery-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .status-en-preparation { background: #ff7300; }
+        .status-en-transit { background: #0ea5e9; }
+        .status-en-livraison { background: #e65100; }
+        .status-livre { background: #009639; }
+        
+        .delivery-address {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+        
+        .delivery-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #ff7300;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .btn-success {
+            background: #009639;
+            color: white;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .quick-action {
+            background: white;
+            border: 2px solid #d1d5db;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-action:hover {
+            border-color: #ff7300;
+            transform: translateY(-2px);
+        }
+        
+        .quick-action-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .quick-action-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .ivoirian-flag {
+            display: flex;
+            height: 4px;
+            margin-bottom: 16px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .flag-orange { background: #ff7300; flex: 1; }
+        .flag-white { background: #ffffff; flex: 1; }
+        .flag-green { background: #009639; flex: 1; }
+        
+        .demo-note {
+            background: #ecfdf5;
+            border: 2px solid #009639;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="status-bar">
+            <span>9:41</span>
+            <span>🇨🇮 Nexaci Livreur</span>
+            <span>100%</span>
+        </div>
+        
+        <div class="header">
+            <h1>🚚 Dashboard Livreur</h1>
+            <div class="subtitle">Thème Ivoirien v1.1.0</div>
+        </div>
+        
+        <div class="ivoirian-flag">
+            <div class="flag-orange"></div>
+            <div class="flag-white"></div>
+            <div class="flag-green"></div>
+        </div>
+        
+        <div class="content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">En cours</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">45</div>
+                    <div class="stat-label">Livrés aujourd'hui</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Mandats</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">325k</div>
+                    <div class="stat-label">FCFA gagnés</div>
+                </div>
+            </div>
+            
+            <div class="quick-actions">
+                <div class="quick-action">
+                    <div class="quick-action-icon">📍</div>
+                    <div class="quick-action-label">Scanner QR Code</div>
+                </div>
+                <div class="quick-action">
+                    <div class="quick-action-icon">📷</div>
+                    <div class="quick-action-label">Prendre Photo</div>
+                </div>
+                <div class="quick-action">
+                    <div class="quick-action-icon">📍</div>
+                    <div class="quick-action-label">Ma Position</div>
+                </div>
+                <div class="quick-action">
+                    <div class="quick-action-icon">📞</div>
+                    <div class="quick-action-label">Support</div>
+                </div>
+            </div>
+            
+            <div class="delivery-section">
+                <div class="section-title">🚚 Livraisons prioritaires</div>
+                
+                <div class="delivery-item">
+                    <div class="delivery-header">
+                        <div class="delivery-id">CLS-2025-000011</div>
+                        <div class="delivery-status status-en-preparation">En préparation</div>
+                    </div>
+                    <div class="delivery-address">📍 Cocody, Angré 8ème tranche</div>
+                    <div class="delivery-actions">
+                        <button class="action-button btn-primary">📍 Localiser</button>
+                        <button class="action-button btn-secondary">📞 Appeler</button>
+                    </div>
+                </div>
+                
+                <div class="delivery-item">
+                    <div class="delivery-header">
+                        <div class="delivery-id">MAN-2025-000008</div>
+                        <div class="delivery-status status-en-transit">En transit</div>
+                    </div>
+                    <div class="delivery-address">📍 Plateau, Face RTI</div>
+                    <div class="delivery-actions">
+                        <button class="action-button btn-success">✅ Livrer</button>
+                        <button class="action-button btn-secondary">📷 Photo</button>
+                    </div>
+                </div>
+                
+                <div class="delivery-item">
+                    <div class="delivery-header">
+                        <div class="delivery-id">MAN-2025-000009</div>
+                        <div class="delivery-status status-livre">Livré</div>
+                    </div>
+                    <div class="delivery-address">📍 Yopougon, Marché</div>
+                    <div class="delivery-actions">
+                        <button class="action-button btn-secondary">✅ Terminé</button>
+                        <button class="action-button btn-secondary">📄 Détails</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="delivery-section">
+                <div class="section-title">📋 Mandats administratifs</div>
+                
+                <div class="delivery-item">
+                    <div class="delivery-header">
+                        <div class="delivery-id">Extrait de naissance</div>
+                        <div class="delivery-status status-en-preparation">Documents vérifiés</div>
+                    </div>
+                    <div class="delivery-address">🏢 Mairie d'Abidjan → KOUASSI Yao</div>
+                    <div class="delivery-actions">
+                        <button class="action-button btn-primary">🏢 Aller en mairie</button>
+                        <button class="action-button btn-secondary">📋 Détails</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="demo-note">
+                <strong>🚚 Aperçu App Livreur v1.1.0</strong><br>
+                Couleurs ivoiriennes : Vert principal • Orange actions • Blanc fond<br>
+                Interface optimisée pour les livreurs en Côte d'Ivoire
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulation interactions
+        document.querySelectorAll('.quick-action').forEach(el => {
+            el.addEventListener('click', function() {
+                const label = this.querySelector('.quick-action-label').textContent;
+                alert(`🇨🇮 Action: ${label}\n\nThème ivoirien activé!\nCouleurs du drapeau appliquées.`);
+            });
+        });
+        
+        document.querySelectorAll('.action-button').forEach(el => {
+            el.addEventListener('click', function() {
+                const action = this.textContent;
+                alert(`🚚 ${action}\n\nApp livreur avec thème ivoirien prête!`);
+            });
+        });
+    </script>
+</body>
+</html>
