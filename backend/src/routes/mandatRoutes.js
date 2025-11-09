@@ -25,14 +25,16 @@ const router = express.Router();
 // Suivi public d'un mandat
 router.get('/track/:reference', trackMandat);
 
+// Types de documents et administrations - publics pour permettre la sélection avant connexion
+router.get('/document-types', getDocumentTypes);
+router.get('/administrations', getAdministrations);
+
 // ==================== ROUTES PROTÉGÉES ====================
 
 // Toutes les routes suivantes nécessitent une authentification
 router.use(protect);
 
 // Routes accessibles à tous les utilisateurs authentifiés
-router.get('/document-types', getDocumentTypes);
-router.get('/administrations', getAdministrations);
 router.post('/', createMandat);
 router.get('/my-mandats', getMyMandats);
 // Mandats assignés au livreur connecté (AVANT /:id pour éviter conflit de route)
