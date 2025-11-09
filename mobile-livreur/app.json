@@ -2,13 +2,13 @@
   "expo": {
     "name": "NexaCI Livreur",
     "slug": "nexaci-livreur",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/nexaci-logo.png.png",
     "splash": {
       "image": "./assets/images/nexaci-logo.png.png",
       "resizeMode": "contain",
-      "backgroundColor": "#1976d2"
+      "backgroundColor": "#ff7300"
     },
     "updates": {
       "fallbackToCacheTimeout": 0,
@@ -28,7 +28,7 @@
       "package": "com.nexaci.livreur",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/nexaci-logo.png.png",
-        "backgroundColor": "#1976d2"
+        "backgroundColor": "#ff7300"
       },
       "permissions": [
         "CAMERA",

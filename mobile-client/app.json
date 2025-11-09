@@ -2,13 +2,13 @@
   "expo": {
     "name": "NexaCI Client",
     "slug": "nexaci-client",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/nexaci-logo.png.png",
     "splash": {
       "image": "./assets/images/nexaci-logo.png.png",
       "resizeMode": "contain",
-      "backgroundColor": "#10b981"
+      "backgroundColor": "#ff7300"
     },
     "updates": {
       "fallbackToCacheTimeout": 0,
@@ -28,7 +28,7 @@
       "package": "com.nexaci.client",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/nexaci-logo.png.png",
-        "backgroundColor": "#10b981"
+        "backgroundColor": "#ff7300"
       }
     },
     "extra": {
