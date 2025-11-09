@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FileText, User, MapPin, Upload, ArrowLeft, Wallet } from 'lucide-react';
+import { mandatService } from '../../services/mandatService';
 
 interface MandateFormProps {
   onBack: () => void;
@@ -24,6 +25,11 @@ export interface MandateData {
 
 export default function MandateForm({ onBack, onSubmit }: MandateFormProps) {
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [documentTypes, setDocumentTypes] = useState<any[]>([]);
+  const [administrations, setAdministrations] = useState<any[]>([]);
+  const [selectedAdmin, setSelectedAdmin] = useState('');
+  
   const [formData, setFormData] = useState<MandateData>({
     documentType: '',
     fullName: '',
@@ -36,9 +42,29 @@ export default function MandateForm({ onBack, onSubmit }: MandateFormProps) {
     phone: '',
     deliveryAddress: '',
     deliveryLandmark: '',
-    paymentMethod: '',
+    paymentMethod: 'orange_money',
     urgency: 'normal'
   });
+
+  // Charger les types de documents et administrations depuis le backend
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const [typesRes, adminsRes] = await Promise.all([
+          mandatService.getDocumentTypes(),
+          mandatService.getAdministrations()
+        ]);
+        setDocumentTypes(typesRes.data.data || []);
+        setAdministrations(adminsRes.data.data || []);
+      } catch (error) {
+        console.error('Erreur chargement données:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
   const updateField = (field: keyof MandateData, value: string) => {
     setFormData({ ...formData, [field]: value });
@@ -55,25 +81,53 @@ export default function MandateForm({ onBack, onSubmit }: MandateFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    
+    // Transformer les données pour l'API backend
+    const mandatData = {
+      type_document: formData.documentType,
+      administration: selectedAdmin,
+      informations_document: {
+        nom_complet: formData.fullName,
+        date_naissance: formData.dateOfBirth,
+        lieu_naissance: formData.placeOfBirth,
+        nom_pere: formData.fatherName,
+        nom_mere: formData.motherName
+      },
+      livraison: {
+        adresse: formData.deliveryAddress,
+        ville: formData.deliveryAddress.split(',').pop()?.trim() || 'Abidjan',
+        telephone: formData.phone
+      },
+      paiement: {
+        methode: formData.paymentMethod
+      }
+    };
+    
+    onSubmit(mandatData);
   };
 
-  const documentTypes = [
-    { id: 'birth', name: 'Extrait de naissance', price: '3.500 FCFA', delay: '3-5 jours' },
-    { id: 'marriage', name: 'Acte de mariage', price: '5.000 FCFA', delay: '5-7 jours' },
-    { id: 'death', name: 'Acte de décès', price: '3.000 FCFA', delay: '3-5 jours' },
-    { id: 'residence', name: 'Certificat de résidence', price: '2.500 FCFA', delay: '2-3 jours' },
-    { id: 'id', name: 'Copie CNI', price: '4.000 FCFA', delay: '5-7 jours' }
+  // Types de documents ivoiriens
+  const ivorianDocumentTypes = [
+    { id: 'extrait_naissance', name: 'Extrait de naissance', price: '2.500 FCFA', delay: '2-3 jours', description: 'Document officiel de l\'état civil ivoirien' },
+    { id: 'acte_naissance', name: 'Acte de naissance', price: '3.500 FCFA', delay: '3-5 jours', description: 'Copie intégrale de l\'acte de naissance' },
+    { id: 'certificat_nationalite', name: 'Certificat de nationalité', price: '5.000 FCFA', delay: '5-7 jours', description: 'Justificatif de nationalité ivoirienne' },
+    { id: 'acte_mariage', name: 'Acte de mariage', price: '4.000 FCFA', delay: '3-5 jours', description: 'Copie de l\'acte de mariage' },
+    { id: 'acte_deces', name: 'Acte de décès', price: '3.000 FCFA', delay: '2-4 jours', description: 'Copie de l\'acte de décès' },
+    { id: 'casier_judiciaire', name: 'Casier judiciaire', price: '2.000 FCFA', delay: '3-5 jours', description: 'Extrait du casier judiciaire' },
+    { id: 'certificat_residence', name: 'Certificat de résidence', price: '1.500 FCFA', delay: '1-2 jours', description: 'Attestation de domicile' },
+    { id: 'legalisation', name: 'Légalisation de documents', price: '1.000 FCFA', delay: '1-3 jours', description: 'Légalisation de signatures ou documents' }
   ];
 
   const paymentMethods = [
-    { id: 'orange', name: 'Orange Money', logo: '🟠' },
-    { id: 'moov', name: 'Moov Money', logo: '🔵' },
-    { id: 'wave', name: 'Wave', logo: '💙' },
-    { id: 'momo', name: 'MTN Momo', logo: '🟡' }
+    { id: 'orange_money', name: 'Orange Money', logo: '🟠', description: 'Paiement mobile Orange CI' },
+    { id: 'mtn_money', name: 'MTN Mobile Money', logo: '🟡', description: 'Paiement mobile MTN CI' },
+    { id: 'moov_money', name: 'Moov Money', logo: '🔵', description: 'Paiement mobile Moov Africa' },
+    { id: 'wave', name: 'Wave', logo: '💙', description: 'Transfert d\'argent Wave' },
+    { id: 'especes', name: 'Espèces à la livraison', logo: '�', description: 'Paiement cash au livreur' }
   ];
 
-  const selectedDoc = documentTypes.find(d => d.id === formData.documentType);
+  const selectedDoc = (documentTypes.length > 0 ? documentTypes : ivorianDocumentTypes)
+    .find(d => d.id === formData.documentType || d._id === formData.documentType);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -91,8 +145,13 @@ export default function MandateForm({ onBack, onSubmit }: MandateFormProps) {
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Mandat Administratif</h1>
-          <p className="text-gray-600">Obtenez vos documents administratifs sans vous déplacer</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            🇨🇮 Mandat Administratif - Côte d'Ivoire
+          </h1>
+          <p className="text-gray-600">
+            Obtenez vos documents administratifs ivoiriens sans vous déplacer. 
+            Service agréé pour toutes les mairies et administrations de Côte d'Ivoire.
+          </p>
         </div>
 
         <div className="mb-8">
